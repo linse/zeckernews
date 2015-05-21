@@ -12,14 +12,14 @@ host = linse.me
 
 generate:
 	for f in `ls $(indir)`; \
-		do pandoc $(indir)/$$f -o $(outdir)/"$${f/%.*/.html}" --template template.html --css style.css; \
+		do pandoc $(indir)/$$f -o $(outdir)/"$${f/%.*/.html}" -A after.html --css style.css; \
 	done;
 
 generate-index:
 	(echo "# Posts Index"; \
 	for f in `ls $(indir)`; \
 		do echo "- <https://"$(host)/"$${f/%.*/.html}>"; \
-	done) | pandoc -f markdown -o $(outdir)/index.html --template template.html --css style.css;
+	done) | pandoc -f markdown -o $(outdir)/index.html -A after.html --css style.css;
 
 set-style:
 	cp style.css $(outdir)

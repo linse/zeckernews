@@ -5,6 +5,10 @@ var col;
 var row;
 var numPixels;
 
+function testResults(this.form) {
+	alert("Test results")
+}
+
 function draw() {
 	var canvas = document.getElementById('header');
 	ctx = canvas.getContext("2d");
@@ -28,6 +32,10 @@ function rainbow(n) {
 } 
 
 function init() {
+	// filling the canvas white
+	ctx.fillStyle = "white";
+	ctx.fillRect(0, 0, W, H);
+
 	var colors = []	
 	for (var i = 1; i <= numPixels; i++) { 
 		colors.push(i); 

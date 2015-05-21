@@ -1,0 +1,26 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script type="text/javascript">
+      $(function () {
+
+        $('form').on('submit', function (e) {
+
+          e.preventDefault();
+
+          $.ajax({
+            type: 'post',
+            url: 'https://linse.me:8000',
+            data: $('form').serialize(),
+            success: function () {
+              alert('form was submitted');
+            }
+          });
+
+        });
+
+      });
+</script>
+<form name="comment" id="comment" method="post" action="#">
+  <label for="message">Message:</label>
+    <textarea id="message" name="message" placeholder="Write nice things here 😀" required="required" data-minlength="20"></textarea>
+  <input type="submit">
+</form>
