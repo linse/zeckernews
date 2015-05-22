@@ -23,7 +23,6 @@ generate-index:
 
 set-style:
 	cp style.css $(outdir)
-	cp header.js $(outdir)
 
 ## made it https like this:
 #https://www.digitalocean.com/community/tutorials/how-to-create-an-ssl-certificate-on-nginx-for-ubuntu-14-04
@@ -37,9 +36,46 @@ set-style:
 
 ## add javascript for sparklepony header
 
-## TODO add js for comment magick
+# add js for comment magick
+# write nodejs server, add keys and set it up under nginx location
+# https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-14-04
+# 1 set up oauth and do gist via curl without password
+#    curl https://api.github.com/authorizations \
+#    > --user "linse" \
+#    > --data '{"scopes":["gist"],"note":"zeckernews"}'
+#    Enter host password for user 'linse':
+#    {
+#      "id": 18413790,
+#      "url": "https://api.github.com/authorizations/18413790",
+#      "app": {
+#        "name": "zeckernews (API)",
+#        "url": "https://developer.github.com/v3/oauth_authorizations/",
+#        "client_id": "00000000000000000000"
+#      },
+#      "token": "d433ba8b52b9a5cf75c194f7a9646c474a400ba7",
+#      "hashed_token": "643a5127976e8bdde49a05257010338ab6a431d37e36898dffac83000f8dd94b",
+#      "token_last_eight": "4a400ba7",
+#      "note": "zeckernews",
+#      "note_url": null,
+#      "created_at": "2015-05-22T22:12:08Z",
+#      "updated_at": "2015-05-22T22:12:08Z",
+#      "scopes": [
+#        "gist"
+#      ],
+#      "fingerprint": null
+#    }
 
-#TODO css broke the metadata
+
+# do gist via get request from the node server
+#https://developer.github.com/v3/#user-agent-required
+
+# create a patch instead of a gist
+
+# figure out how to host on github and create pr
+
+# think about removing intermediate step - but token?
+# TODO
+
 #TODO make it look nice :)
 # more headers: blank tv, game of life, fractals
 # static triangle
