@@ -12,7 +12,7 @@ host = linse.me
 
 generate:
 	for f in `ls $(indir)`; \
-		do pandoc $(indir)/$$f -o $(outdir)/"$${f/%.*/.html}" -B before.html -A after.html --css style.css; \
+		do pandoc $(indir)/$$f -o $(outdir)/"$${f/%.*/.html}" -B before.html -A afterPost.html --css style.css; \
 	done;
 
 generate-index:
