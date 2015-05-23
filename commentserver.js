@@ -12,11 +12,8 @@ var server = https.createServer(options, function (req, res) {
     body += chunk;
   });
   req.on('end', function () {
-    // show the POSTed message
-    if (body) {
-      console.log(composeGist(decodeURI(body),counter++));
-      // TODO contact github
-    }
+    // build and post gist from POSTed form message
+    composeAndPostGist(decodeURI(body),counter++);
     res.end("Thank you");
   });
 })
@@ -29,14 +26,35 @@ console.log("Server running at http://127.0.0.1:8000/");
 console.log("🎂");
 var counter = 0;
 
-function composeGist(content, counter) {
-  //return 'curl --user "linse" --data \'{"description":"From commentserver","public":"true","files":{"Comment'+counter+'.txt":{"content":"'+data+'"}}\' https://api.github.com/gists';
-  //curl -H "Authorization: token d433ba8b52b9a5cf75c194f7a9646c474a400ba7" --data '{"description":"From commentserver","public":"true","files":{"Comment11.txt":{"content":"message=hallo+oauth"}}' https://api.github.com/gists
-  postGist('{"description":"From commentserver","public":"true","files":{"Comment'+counter+'.txt":{"content":"'+content+'"}}');
+function composeAndPostGist(content, counter) {
+  patchOnGithub('{"description":"🐞zeckernews","public":"true","files":{"Comment'+counter+'.txt":{"content":"'+content+'"}}');
 }
 
-// TODO set this up to do what whe are duing via curl above
-function postGist(content) {
+// this can be used to update the overall last comment
+function patchOnGithub(content) {
+
+    var post_req = https.request({
+      method: 'PATCH',
+      hostname: 'api.github.com',
+      path: '/gists/90095144cc601cf2030b',
+      headers: { 'Authorization': 'token d433ba8b52b9a5cf75c194f7a9646c474a400ba7',
+                 'User-Agent': 'zeckernews' },
+    },function(res) {
+      res.setEncoding('utf8');
+      res.on('data', function (chunk) {
+          //console.log('Response: ' + chunk);
+      });
+      // TODO signal when we are done - where is the gist?
+   }
+   );
+   
+   // post the data
+  post_req.write(content);
+  post_req.end();
+   
+}
+
+function postToGithub(content) {
 
     var post_req = https.request({
       method: 'POST',
@@ -47,8 +65,9 @@ function postGist(content) {
     },function(res) {
       res.setEncoding('utf8');
       res.on('data', function (chunk) {
-          console.log('Response: ' + chunk);
+          //console.log('Response: ' + chunk);
       });
+      // TODO signal when we are done - where is the gist?
    }
    );
    

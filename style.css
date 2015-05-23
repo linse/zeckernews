@@ -29,7 +29,7 @@ body, textarea, input {
   font-size: 16px;
   line-height: 1.5;
   font-weight: 300;
-  color: #33CC33;
+  color: #888;
 }
 
 h1 {
@@ -50,7 +50,8 @@ textarea {
 	height: 0;
 	border-left: 30px solid transparent;
 	border-right: 30px solid transparent;
-	border-bottom: 20px solid #FF99FF;
+	border-bottom: 20px solid #FFCCFF;
+	border-bottom: 20px solid white;
 	display:inline-block;
 }
 
@@ -59,6 +60,6 @@ textarea {
 	height: 0;
 	border-left: 30px solid transparent;
 	border-right: 30px solid transparent;
-	border-top: 20px solid #99FF99;
+	border-top: 20px solid #FFFF99;
 	display:inline-block;
 }

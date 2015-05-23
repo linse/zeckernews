@@ -69,9 +69,12 @@ set-style:
 # do gist via get request from the node server
 #https://developer.github.com/v3/#user-agent-required
 
-# create a patch instead of a gist
+# modify existing gist
 
-# figure out how to host on github and create pr
+# TODO create a patch instead of a gist
+### THIS IS FOR ALTERING THE SOURCE!
+
+# TODO figure out how to host on github and create pr
 
 # think about removing intermediate step - but token?
 # TODO
@@ -79,6 +82,7 @@ set-style:
 #TODO make it look nice :)
 # more headers: blank tv, game of life, fractals
 # static triangle
+#http://www.backslash.gr/content/blog/webdevelopment/6-navigation-menu-that-stays-on-top-with-jquery
 
 #TODO test on phooone :D
 #
