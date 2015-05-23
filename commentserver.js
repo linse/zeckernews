@@ -27,52 +27,34 @@ console.log("🎂");
 var counter = 0;
 
 function composeAndPostGist(content, counter) {
-  patchOnGithub('{"description":"🐞zeckernews","public":"true","files":{"Comment'+counter+'.txt":{"content":"'+content+'"}}');
+  patchGist('{"description":"🐞zeckernews","public":"true","files":{"Comment'+counter+'.txt":{"content":"'+content+'"}}');
 }
 
 // this can be used to update the overall last comment
-function patchOnGithub(content) {
-
-    var post_req = https.request({
-      method: 'PATCH',
-      hostname: 'api.github.com',
-      path: '/gists/90095144cc601cf2030b',
-      headers: { 'Authorization': 'token d433ba8b52b9a5cf75c194f7a9646c474a400ba7',
-                 'User-Agent': 'zeckernews' },
-    },function(res) {
-      res.setEncoding('utf8');
-      res.on('data', function (chunk) {
-          //console.log('Response: ' + chunk);
-      });
-      // TODO signal when we are done - where is the gist?
-   }
-   );
-   
-   // post the data
-  post_req.write(content);
-  post_req.end();
-   
+function patchGist(content) {
+  sendGithubRequest('PATCH', '/gists/90095144cc601cf2030b', content);
 }
 
-function postToGithub(content) {
+function postGist(content) {
+  sendGithubRequest('POST', '/gists', content);
+}
 
-    var post_req = https.request({
-      method: 'POST',
-      hostname: 'api.github.com',
-      path: '/gists',
-      headers: { 'Authorization': 'token d433ba8b52b9a5cf75c194f7a9646c474a400ba7',
-                 'User-Agent': 'zeckernews' },
-    },function(res) {
-      res.setEncoding('utf8');
-      res.on('data', function (chunk) {
-          //console.log('Response: ' + chunk);
-      });
-      // TODO signal when we are done - where is the gist?
-   }
-   );
+function sendGithubRequest(method, path, content) {
+  var post_req = https.request({
+    method: method,
+    hostname: 'api.github.com',
+    path: path,
+    headers: { 'Authorization': 'token d433ba8b52b9a5cf75c194f7a9646c474a400ba7',
+               'User-Agent': 'zeckernews' },
+  },function(res) {
+    res.setEncoding('utf8');
+    res.on('data', function (chunk) {
+        //console.log('Response: ' + chunk);
+    });
+    // TODO signal when we are done - return gist id?
+  });
    
-   // post the data
+  // post the data
   post_req.write(content);
   post_req.end();
-   
 }
