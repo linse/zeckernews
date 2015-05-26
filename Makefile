@@ -70,6 +70,13 @@ set-style:
 #https://developer.github.com/v3/#user-agent-required
 
 # modify existing gist
+# decode + deserialize message
+# remove token
+
+# daemonize
+# by hand https://www.digitalocean.com/community/tutorials/how-to-write-a-linux-daemon-with-node-js-on-a-vps
+# by npm http://stackoverflow.com/questions/4903570/how-does-one-start-a-node-js-server-as-a-daemon-process
+# commentserver/commentserver start
 
 # TODO create a patch instead of a gist
 ### THIS IS FOR ALTERING THE SOURCE!
