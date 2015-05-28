@@ -1,11 +1,14 @@
 var https = require('https');
 var fs = require('fs');
+var sys = require('sys')
+var exec = require('child_process').exec;
 
 var options = {
   key: fs.readFileSync('/etc/nginx/ssl/nginx.key'),
   cert: fs.readFileSync('/etc/nginx/ssl/nginx.crt'),
   token: fs.readFileSync('/etc/zeckernews/token'),
   port: 8000,
+  local_repo: '/home/linse/zeckernews'
 };
 
 var server = https.createServer(options, function (req, res) {
