@@ -54,7 +54,7 @@ function composeAndPostPR(formData) {
   // add comment
   exec("cat \""+formData.name+" posted a message "+formData.message
      +"\n\" >> "+options.local_repo+"/content/"+formData.file.replace("html","md"), puts); // TODO optionize
-  exec("cd "+options.local_repo+" && git commit -a -m "+formData.message, puts); // TODO record this hash!
+  exec("cd "+options.local_repo+" && git commit -m "+formData.message+" content", puts); // TODO optionize, record this hash!
   var data = '{"title":"Amazing new feature","body":"please pull this in!","head":"'+formData.name+'","base":"master"}';
   sendGithubRequest('POST', '/repos/linse/zeckernews/pulls', data);
   exec("cd "+options.local_repo+" && git checkout master", puts); 
