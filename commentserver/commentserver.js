@@ -54,8 +54,9 @@ function composeAndPostPR(formData) {
   // add comment
   exec("cat \""+formData.name+" posted a message "+formData.message
      +"\n\" >> "+options.local_repo+"/content/"+formData.file.replace("html","md"), puts); // TODO optionize
-  //var data = '{"title":"Amazing new feature","body":"please pull this in!","head":"linse:master","base":"master"}';
-  //sendGithubRequest('POST', '/repos/linse/zeckernews/pulls', data);
+  exec("cd "+options.local_repo+" && git commit -a -m "+formData.message, puts); // TODO record this hash!
+  var data = '{"title":"Amazing new feature","body":"please pull this in!","head":"'+formData.name+'","base":"master"}';
+  sendGithubRequest('POST', '/repos/linse/zeckernews/pulls', data);
   exec("cd "+options.local_repo+" && git checkout master", puts); 
 }
 
@@ -104,14 +105,6 @@ function sendGithubRequest(method, path, content) {
   // post the data
   post_req.write(content);
   post_req.end();
-}
-
-// so far we just have one parameter: message=somemessage+with+pluses
-function deserializeMessage(string) {
-  var parts = string.split("=");
-  var message = parts[1].replace(/\+/g," ");
-  // decode as last step - don't remove pluses from form input
-  return decodeURIComponent(message);
 }
 
 function deserializeForm(string) {
