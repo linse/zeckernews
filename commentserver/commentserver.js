@@ -4,9 +4,9 @@ var sys = require('sys')
 var exec = require('child_process').exec;
 
 var options = {
-  key: fs.readFileSync('/etc/nginx/ssl/nginx.key'),
-  cert: fs.readFileSync('/etc/nginx/ssl/nginx.crt'),
-  token: fs.readFileSync('/etc/zeckernews/token'),
+  key: fs.readFileSync('/etc/nginx/ssl/nginx.key','utf8'),
+  cert: fs.readFileSync('/etc/nginx/ssl/nginx.crt','utf8'),
+  token: fs.readFileSync('/etc/zeckernews/token','utf8').trim(),
   port: 8000,
   local_repo: '/home/linse/zeckernews'
 };
@@ -48,16 +48,19 @@ function postGist(content) {
 
 // this is happening
 function composeAndPostPR(formData) {
+  formData.name = formData.name || "anonymous;"
   console.log(formData);
   // new branch - TODO what if it exists?
   exec("cd "+options.local_repo+" && git checkout -b "+formData.name, puts); 
   // add comment
-//  exec("cat \""+formData.name+" posted a message "+formData.message
-//     +"\n\" >> "+options.local_repo+"/content/"+formData.file.replace("html","md"), puts); // TODO optionize
-//  exec("cd "+options.local_repo+" && git commit -m "+formData.message+" content", puts); // TODO optionize, record this hash!
-//  var data = '{"title":"Amazing new feature","body":"please pull this in!","head":"'+formData.name+'","base":"master"}';
-//  sendGithubRequest('POST', '/repos/linse/zeckernews/pulls', data);
-//  exec("cd "+options.local_repo+" && git checkout master", puts); 
+  exec("echo \""+formData.name+" posted a message "+formData.message
+     +"\\n\" >> "+options.local_repo+"/content/"+formData.file.replace("html","md"), puts); // TODO optionize
+  exec("cd "+options.local_repo+" && git commit -m "+formData.message+" content", puts); // TODO optionize, record this hash!
+  exec("cd "+options.local_repo+" && git push https://"+options.token+"@github.com/linse/zeckernews.git "+formData.name, puts);
+  console.log("cd "+options.local_repo+" && git push https://"+options.token+"@github.com/linse/zeckernews.git "+formData.name, puts);
+  var data = '{"title":"New comment PR","body":"from '+formData.name+'","head":"'+formData.name+'","base":"master"}';
+  sendGithubRequest('POST', '/repos/linse/zeckernews/pulls', data);
+  exec("cd "+options.local_repo+" && git checkout master", puts); 
 }
 
 function puts(error, stdout, stderr) { sys.puts(stdout) }
