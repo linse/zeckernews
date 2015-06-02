@@ -46,38 +46,32 @@ function postGist(content) {
   sendGithubRequest('POST', '/gists', content);
 }
 
-// TODO get rid of all the exec we can
 function composeAndPostPR(formData) {
   formData.name = formData.name || "anonymous";
   console.log(formData);
-  // new branch - TODO what if it exists?
-  exec("cd "+options.local_repo+" && git checkout -b "+formData.name, puts); 
-  // add comment
-  exec("echo \""+formData.name+" posted a message "+formData.message
-     +"\\n\" >> "+options.local_repo+"/content/"+formData.file.replace("html","md"), puts); // TODO optionize
-  exec("cd "+options.local_repo+" && git commit -m "+formData.message+" content", puts); // TODO optionize, record this hash!
-  exec("cd "+options.local_repo+" && git push https://"+options.token+"@github.com/linse/zeckernews.git "+formData.name, puts);
-  exec("cd "+options.local_repo+" && git checkout master", puts); 
-  var data = '{"title":"New comment PR","body":"from ","head":"'+formData.name+'","base":"master"}';
-  sendGithubRequest('POST', '/repos/linse/zeckernews/pulls', data);
+  composePR(formData, function (error, stdout, stderr) { postPR(formData); }); 
 }
 
 function puts(error, stdout, stderr) { sys.puts(stdout) }
 function devnull(error, stdout, stderr) { }
 
-// TODO branch with users name
-// TODO what happens if branch already exists? (middle statment fail) - generate branchnames with increasing number or nonce?
-function newBranch(name) {
-  exec("cd "+options.local_repo+" && git checkout -b "+name, puts); 
-  // needs auth exec("git push origin "+name, puts);
+// TODO get rid of all the exec
+// TODO what to actually append
+// TODO rebuild!
+function composePR(formData, callback) {
+  exec("cd "+options.local_repo
+  +" && git checkout -b "+formData.name // TODO what if branch exists
+  +" && echo \""+formData.name+" posted a message "+formData.message
+  +"\" >> "+options.local_repo+"/content/"+formData.file.replace("html","md") // TODO optionize
+  +" && git commit -m "+formData.message+" content"
+  +" && git push https://"+options.token+"@github.com/linse/zeckernews.git "+formData.name
+  +" ; git checkout master", callback);
 }
 
-function appendTo(comment, filename) {
-  exec("cat "+comment+" >> "+options.local_repo+"/"+filename, puts);
-}
-
-function commit() {
-  exec("cd "+options.local_repo+" && git commit -a -m new comment", puts); 
+function postPR(formData) {
+  var data = '{"title":"New comment PR","body":"from the form","head":"'+formData.name+'","base":"master"}';
+  console.log(data);
+  sendGithubRequest('POST', '/repos/linse/zeckernews/pulls', data);
 }
 
 function getBranches() {
