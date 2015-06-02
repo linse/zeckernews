@@ -46,9 +46,9 @@ function postGist(content) {
   sendGithubRequest('POST', '/gists', content);
 }
 
-// this is happening
+// TODO get rid of all the exec we can
 function composeAndPostPR(formData) {
-  formData.name = formData.name || "anonymous;"
+  formData.name = formData.name || "anonymous";
   console.log(formData);
   // new branch - TODO what if it exists?
   exec("cd "+options.local_repo+" && git checkout -b "+formData.name, puts); 
@@ -57,10 +57,9 @@ function composeAndPostPR(formData) {
      +"\\n\" >> "+options.local_repo+"/content/"+formData.file.replace("html","md"), puts); // TODO optionize
   exec("cd "+options.local_repo+" && git commit -m "+formData.message+" content", puts); // TODO optionize, record this hash!
   exec("cd "+options.local_repo+" && git push https://"+options.token+"@github.com/linse/zeckernews.git "+formData.name, puts);
-  console.log("cd "+options.local_repo+" && git push https://"+options.token+"@github.com/linse/zeckernews.git "+formData.name, puts);
-  var data = '{"title":"New comment PR","body":"from '+formData.name+'","head":"'+formData.name+'","base":"master"}';
-  sendGithubRequest('POST', '/repos/linse/zeckernews/pulls', data);
   exec("cd "+options.local_repo+" && git checkout master", puts); 
+  var data = '{"title":"New comment PR","body":"from ","head":"'+formData.name+'","base":"master"}';
+  sendGithubRequest('POST', '/repos/linse/zeckernews/pulls', data);
 }
 
 function puts(error, stdout, stderr) { sys.puts(stdout) }
