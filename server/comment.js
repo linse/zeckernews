@@ -70,7 +70,7 @@ function composePR(formData, callback) {
 }
 
 function postPR(formData) {
-  var data = '{"title":"New comment PR","body":"from the form","head":"'+formData.name+'","base":"master"}';
+  var data = '{"title":"Comment PR: '+formData.message+'","body":"from the form","head":"'+formData.name+'","base":"master"}';
   console.log(data);
   sendGithubRequest('POST', '/repos/linse/zeckernews/pulls', data);
 }
@@ -107,6 +107,7 @@ function sendGithubRequest(method, path, content) {
 function deserializeForm(string) {
   var parts = string.split("&");
   if (parts.length != 3) {
+    console.log("need request with filename, username, message from form!");
     return; //throw "need request with filename, username, message from form!";
   }
   // throw away part before =, replace pluses which encode space
