@@ -8,7 +8,7 @@
           $.ajax({
             type: 'post',
             url: 'https://linse.me/comment',
-            data: $('form').serialize(),
+            data: 'url='+window.location.pathname+'&'+$('form').serialize(),
             success: function () {
               $('form').get(0).reset();
             }
@@ -30,6 +30,7 @@
 <div id="triangle-down"></div>
 
 <form name="comment" id="comment" method="post" action="#" accept-charset="UTF-8">
+    <input type="text" id="name" name="name" placeholder="Anonymous" data-minlength="3">
     <textarea id="message" name="message" placeholder="Write a nice comment here 😀" required="required" data-minlength="20"></textarea>
   <input type="submit">
 </form>
