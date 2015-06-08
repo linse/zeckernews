@@ -10,6 +10,9 @@ indir = content
 outdir = /home/linse/public_html/linse.me/public
 host = linse.me
 
+all:
+	generate generate-index
+
 generate:
 	for f in `ls $(indir)`; \
 		do pandoc $(indir)/$$f -o $(outdir)/"$${f/%.*/.html}" -B before.html -A afterPost.html --css style.css; \
@@ -29,6 +32,23 @@ set-style:
 #sudo mkdir /etc/nginx/ssl
 #sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/nginx.key -out /etc/nginx/ssl/nginx.crt
 #sudo vi /etc/nginx/sites-available/linse.me
+#        location /comment {
+#                proxy_pass https://linse.me:8000;
+#                proxy_http_version 1.1;
+#                proxy_set_header Upgrade $http_upgrade;
+#                proxy_set_header Connection 'upgrade';
+#                proxy_set_header Host $host;
+#                proxy_cache_bypass $http_upgrade;
+#        }
+#
+#        location /deploy {
+#                proxy_pass https://linse.me:6666;
+#                proxy_http_version 1.1;
+#                proxy_set_header Upgrade $http_upgrade;
+#                proxy_set_header Connection 'upgrade';
+#                proxy_set_header Host $host;
+#                proxy_cache_bypass $http_upgrade;
+#        }
 #sudo service nginx restart
 
 ## added css
@@ -56,10 +76,12 @@ set-style:
 # by npm http://stackoverflow.com/questions/4903570/how-does-one-start-a-node-js-server-as-a-daemon-process
 # commentserver/commentserver start
 
-# TODO create a patch instead of a gist
+# create a patch instead of a gist
 ### THIS IS FOR ALTERING THE SOURCE!
 
-# TODO figure out how to host on github and create pr
+# figure out how to host on github and create pr
+
+# TODO run webhook for deploying
 
 # think about removing intermediate step - but token?
 # TODO

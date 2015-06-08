@@ -20,7 +20,7 @@ var server = https.createServer(options, function (req, res) {
     // build and post gist from POSTed form message
     var formData = deserializeForm(body);
     composeAndPostPR(formData);
-    res.end("Thank you");
+    res.end("Send me moar comments!");
   });
 })
 
@@ -28,7 +28,7 @@ var server = https.createServer(options, function (req, res) {
 server.listen(options.port);
 
 // Put a friendly message on the terminal
-console.log("Server running at http://127.0.0.1:"+options.port+"/");
+console.log("Comment server running at http://127.0.0.1:"+options.port+"/");
 console.log("🎂");
 var counter = 0;
 
@@ -47,6 +47,7 @@ function postGist(content) {
 }
 
 function composeAndPostPR(formData) {
+  if (!formData) { return; }
   formData.name = formData.name || "anonymous";
   console.log(formData);
   composePR(formData, function (error, stdout, stderr) { postPR(formData); }); 
@@ -106,7 +107,7 @@ function sendGithubRequest(method, path, content) {
 function deserializeForm(string) {
   var parts = string.split("&");
   if (parts.length != 3) {
-    throw "need request with filename, username, message from form!";
+    return; //throw "need request with filename, username, message from form!";
   }
   // throw away part before =, replace pluses which encode space
   parts = parts.map( function (p) {
