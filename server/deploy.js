@@ -37,5 +37,5 @@ function puts(error, stdout, stderr) { sys.puts(stdout) }
 // TODO get rid of all the exec
 function rebuildZeckernews(callback) {
   exec("cd "+options.local_repo
-  +" && make generate", callback);
+  +" && git pull && make generate", callback);
 }
