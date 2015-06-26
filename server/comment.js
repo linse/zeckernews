@@ -57,14 +57,13 @@ function puts(error, stdout, stderr) { sys.puts(stdout) }
 function devnull(error, stdout, stderr) { }
 
 // TODO get rid of all the exec
-// TODO what to actually append
-// TODO rebuild!
 function composePR(formData, callback) {
   exec("cd "+options.local_repo
   +" && git checkout -b "+formData.name // TODO what if branch exists
-  +" && echo \"\n\n____\n\n"+formData.name+" posted a message "+formData.message
-  +"\n\n____\n\n\" >> "+options.local_repo+"/content/"+formData.file.replace("html","md") // TODO optionize
+  +" && echo \"\n\n____\n\n**"+formData.name+"** posted a message:\n\n> "+formData.message
+  +"\n\n >> "+options.local_repo+"/content/"+formData.file.replace("html","md") // TODO optionize
   +" && git commit -m "+formData.message+" content"
+  // pushing doesnt seem to work in some cases (see makef)! only after we restart the server
   +" && git push https://"+options.token+"@github.com/linse/zeckernews.git "+formData.name
   +" ; git checkout master", callback);
 }

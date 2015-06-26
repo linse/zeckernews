@@ -14,11 +14,13 @@ all:
 	generate generate-index
 
 generate:
+	git pull
 	for f in `ls $(indir)`; \
 		do pandoc $(indir)/$$f -o $(outdir)/"$${f/%.*/.html}" -B before.html -A afterPost.html --css style.css; \
 	done;
 
 generate-index:
+	git pull
 	(echo "# Posts Index"; \
 	for f in `ls $(indir)`; \
 		do echo "- <https://"$(host)/"$${f/%.*/.html}>"; \
@@ -81,10 +83,15 @@ set-style:
 
 # figure out how to host on github and create pr
 
-# TODO run webhook for deploying
+#Add js hook for commenters - they trigger a git commit writing to the posting!
+#but I will have to accept their pull request!
+
+# run webhook for deploying
 
 # think about removing intermediate step - but token?
-# TODO
+
+# add rewrite rules for host
+# (see nginx setup)
 
 #TODO make it look nice :)
 # more headers: blank tv, game of life, fractals
@@ -94,14 +101,14 @@ set-style:
 #TODO test on phooone :D
 #
 #TODO add back and next links in post
-#TODO add rewrite rules for host
 #
 #save/commit source:
 #just commit this dir
 #
 #TODO:
-#Add js hook for commenters - they trigger a git commit writing to the posting!
-#but I will have to accept their pull request!
-#
-#deploy:
-#I don't care I like dangerous things :D
+# TODO
+# local branch cannot exist or we fail
+# remote branch cannot exist or we fail
+# something's up with multiwords - dont work in both name or form!
+# we have to clean up all the branches
+# unmerged requests sneak in via others
