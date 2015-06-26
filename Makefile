@@ -26,6 +26,9 @@ generate-index:
 		do echo "- <https://"$(host)/"$${f/%.*/.html}>"; \
 	done) | pandoc -f markdown -o $(outdir)/index.html -B before.html -A after.html --css style.css;
 
+generate-onepage:
+	pandoc $(ls $outdir/*.html) -o $(outdir)/index.html
+
 set-style:
 	cp style.css $(outdir)
 

@@ -1,3 +1,17 @@
+<canvas id="header" width="1000" height="200px" border="2px black">You need a HTML5 browser to see the fancy header.</canvas>
+<nav class="slippy-nav">
+  <ul>
+    <li><a href="/">home</a></li>
+    <li><a href="/">about</a></li>
+    <li><a href="/">talks</a></li>
+    <li><a href="/">research</a></li>
+    <li><a href="/">twitter</a></li>
+    <li><a href="/">github</a></li>
+    <li><a href="/">insta</a></li>
+    <li><a href="/">rss</a></li>
+  </ul>
+</nav>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 <script type="text/javascript">
 
@@ -10,6 +24,38 @@ function resizeCanvas(c) {
         .width($(window).width())
         .height("200px");
 }
+
+function stickNav() {
+    console.log($(".slippy-nav").css('position'));
+}
+
+$('.slippy-nav').addClass('original').clone().insertAfter('.slippy-nav').addClass('cloned').css('position','fixed').css('top','0').css('margin-top','0').css('z-index','500').removeClass('original').hide();
+
+scrollIntervalID = setInterval(stickIt, 10);
+
+
+function stickIt() {
+
+  var orgElementPos = $('.original').offset();
+  orgElementTop = orgElementPos.top;               
+
+  if ($(window).scrollTop() >= (orgElementTop)) {
+    // scrolled past the original position; now only show the cloned, sticky element.
+
+    // Cloned element should always have same left position and width as original element.     
+    orgElement = $('.original');
+    coordsOrgElement = orgElement.offset();
+    leftOrgElement = coordsOrgElement.left;  
+    widthOrgElement = orgElement.css('width');
+    $('.cloned').css('left',leftOrgElement+'px').css('top',0).css('width',widthOrgElement).show();
+    $('.original').css('visibility','hidden');
+  } else {
+    // not scrolled past the slippy-nav; only show the original slippy-nav.
+    $('.cloned').hide();
+    $('.original').css('visibility','visible');
+  }
+}
+
 
 function rainbow(c, color, numPixels) {
     color = color * 240 / (numPixels - Math.max(c.width,c.height)); // could be 255
@@ -60,6 +106,7 @@ function init() {
     })
 //    setTimeout(init, 100);
     window.scrollTo(0, 170);
+//    stickNav();
 }
 
 $(function() {
@@ -68,6 +115,21 @@ $(function() {
 
 window.onresize = init;
 </script>
-<canvas id="header" width="1000" height="200px" border="2px black">You need a HTML5 browser to see the fancy header.</canvas>
 <div id="container">
+<div id="sidebar">
+<h1>O hai!</h1>
+<p>
+I am linse and I love to make things.
+Feel free to leave a reply regarding any of my projects.
+To talk to me via jabber, just add linse@randale.org.
+</p>
+<p>
+I did my PhD research on RNA Bioinformatics, and also went to Hackerschool in New York.
+</p>
+<p>
+Now I build software to help the community at Etsy.
+Together with Hannes Mehnert and Jens Ohlig I wrote a book on functional programming in JavaScript and curry cooking (Das Curry-Buch, O'Reilly Germany), which is currently being translated into English.
+</p>
+</div>
+
 <div id="post">

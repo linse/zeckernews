@@ -2,25 +2,70 @@ html, body {
   width:  100%;
   height: 100%;
   margin: 0px;
+  padding: 0px;
 }
 
+/* rainbow-light */
 body {
+    background: -webkit-linear-gradient(left, #FF6666, #FFCC66, #FFFF66, #66FF66, #33CCFF, #6699FF, #CC66FF ); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(left, #FF6666, #FFCC66, #FFFF66, #66FF66, #33CCFF, #6699FF, #CC66FF ); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(left, #FF6666, #FFCC66, #FFFF66, #66FF66, #33CCFF, #6699FF, #CC66FF ); /* For Fx 3.6 to 15 */
+    background: linear-gradient(to right, #FF6666, #FFCC66, #FFFF66, #66FF66, #33CCFF, #6699FF, #CC66FF ); /* Standard syntax (must be last) */
+}
+
+#rainbow-dark {
     background: -webkit-linear-gradient(left, red, orange, yellow, green, blue, indigo, violet); /* For Safari 5.1 to 6.0 */
     background: -o-linear-gradient(left, red, orange, yellow, green, blue, indigo, violet); /* For Opera 11.1 to 12.0 */
     background: -moz-linear-gradient(left, red, orange, yellow, green, blue, indigo, violet); /* For Fx 3.6 to 15 */
     background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet); /* Standard syntax (must be last) */
 }
 
+.slippy-nav {
+  z-index: 100;
+  width: 100%;
+  font-size: 14px;
+  /*background: rgba(255,255,255,.90);*/
+    background: -webkit-linear-gradient(left, #FF6666, #FFCC66, #FFFF66, #66FF66, #33CCFF, #6699FF, #CC66FF ); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(left, #FF6666, #FFCC66, #FFFF66, #66FF66, #33CCFF, #6699FF, #CC66FF ); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(left, #FF6666, #FFCC66, #FFFF66, #66FF66, #33CCFF, #6699FF, #CC66FF ); /* For Fx 3.6 to 15 */
+    background: linear-gradient(to right, #FF6666, #FFCC66, #FFFF66, #66FF66, #33CCFF, #6699FF, #CC66FF ); /* Standard syntax (must be last) */
+  color: red;
+}
+
+.slippy-nav ul {
+  margin: 0 auto;
+  line-height: 41px;
+}
+
+.slippy-nav ul li{
+  display: inline;
+  padding: 0px 3em;
+} 
+
+.slippy-nav ul li a{
+  text-decoration: none;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 18px;
+  color: #888;
+}
+
 #container {
   background: white;
-  width: 95%;
-  margin: 0px 2em 2em 2em;
+  width: 100%;
+  margin: 0px auto 3em auto;
+}
+
+#sidebar{
+  float: right;
+  width: 20%;
+  padding-right: 15%;
 }
 
 #post {
   min-height: 15em;
-  width: 65%;
-  margin: 0px auto 0px auto;
+  width: 45%;
+  padding-left:15%;
   padding-bottom: 3em;
 }
 
@@ -32,17 +77,39 @@ body, textarea, input {
   color: #888;
 }
 
+#name, #message {
+  border: none;
+}
+
 h1 {
-  margin-top: 0px;
-  padding-top: 3em;
+  margin: 0px;
+  padding-top: 4em;
+  padding-bottom: .5em;
   background: #FFFF99;
   color: #FF99FF;
+}
+
+h3 {
+  margin: 0px;
+  padding-top: 0;
+  padding-bottom: 2em;
+  color: #FF99FF;
+  text-align: right;
 }
 
 textarea {
   width:  100%;
   height: 4em;
   margin: 1em auto;
+}
+
+.figure {
+  overflow: hidden;
+  height: 240px;
+}
+
+img {
+  width: 100%;
 }
 
 #triangle-up {
