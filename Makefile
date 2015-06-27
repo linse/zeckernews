@@ -19,15 +19,13 @@ generate:
 		do pandoc $(indir)/$$f -o $(outdir)/"$${f/%.*/.html}" -B before.html -A afterPost.html --css style.css; \
 	done;
 
+# Todo generate link name from post title, generate rewritten link
 generate-index:
 	git pull
 	(echo "# Posts Index"; \
 	for f in `ls $(indir)`; \
-		do echo "- <https://"$(host)/"$${f/%.*/.html}>"; \
+		do echo "- [$${f//-/\/}](https://"$(host)/"$${f/%.*/.html}) hallo $$h"; \
 	done) | pandoc -f markdown -o $(outdir)/index.html -B before.html -A after.html --css style.css;
-
-generate-onepage:
-	pandoc $(ls $outdir/*.html) -o $(outdir)/index.html
 
 set-style:
 	cp style.css $(outdir)

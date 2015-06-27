@@ -24,22 +24,19 @@ body {
   z-index: 100;
   width: 100%;
   font-size: 14px;
-  /*background: rgba(255,255,255,.90);*/
-    background: -webkit-linear-gradient(left, #FF6666, #FFCC66, #FFFF66, #66FF66, #33CCFF, #6699FF, #CC66FF ); /* For Safari 5.1 to 6.0 */
-    background: -o-linear-gradient(left, #FF6666, #FFCC66, #FFFF66, #66FF66, #33CCFF, #6699FF, #CC66FF ); /* For Opera 11.1 to 12.0 */
-    background: -moz-linear-gradient(left, #FF6666, #FFCC66, #FFFF66, #66FF66, #33CCFF, #6699FF, #CC66FF ); /* For Fx 3.6 to 15 */
-    background: linear-gradient(to right, #FF6666, #FFCC66, #FFFF66, #66FF66, #33CCFF, #6699FF, #CC66FF ); /* Standard syntax (must be last) */
+  background: rgba(255,255,150,.90);
   color: red;
 }
 
 .slippy-nav ul {
   margin: 0 auto;
+  width: 80%;
   line-height: 41px;
 }
 
 .slippy-nav ul li{
   display: inline;
-  padding: 0px 3em;
+  padding: 0px 2%;
 } 
 
 .slippy-nav ul li a{
@@ -86,14 +83,12 @@ h1 {
   padding-top: 4em;
   padding-bottom: .5em;
   background: #FFFF99;
-  color: #FF99FF;
 }
 
 h3 {
   margin: 0px;
   padding-top: 0;
   padding-bottom: 2em;
-  color: #FF99FF;
 }
 
 textarea {
