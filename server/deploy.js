@@ -22,6 +22,8 @@ var server = https.createServer(options, function (req, res) {
     // rebuild when pr was closed by merge
     if (pullReq.action == 'closed'
      && pullReq.pull_request.merged_at != null) {
+        // gucke alle PR die nach mir kommen an, und schreibe ihre patches so um, dass sie hierunter gehanggt werden koennen
+        // OODER stashe sie lokal und habe immer nur einen pull request offen
         rebuildZeckernews(puts);
     }
     res.end("Send me moar pull requests!");
