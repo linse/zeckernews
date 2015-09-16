@@ -30,46 +30,59 @@ server.listen(options.port);
 // Put a friendly message on the terminal
 console.log("Comment server running at http://127.0.0.1:"+options.port+"/");
 console.log("🎂");
-var counter = 0;
 
-function composeAndPostGist(content, counter) {
-  patchGist('{"description":"🐞zeckernews","public":"true","files":{"Comment'
-    +counter+'.txt":{"content":"'+deserializeMessage(content)+'"}}');
-}
 
-// this can be used to update the overall last comment
-function patchGist(content) {
-  sendGithubRequest('PATCH', '/gists/90095144cc601cf2030b', content);
-}
 
-function postGist(content) {
-  sendGithubRequest('POST', '/gists', content);
-}
+//var counter = 0;
+//
+//function composeAndPostGist(content, counter) {
+//  patchGist('{"description":"🐞zeckernews","public":"true","files":{"Comment'
+//    +counter+'.txt":{"content":"'+deserializeMessage(content)+'"}}');
+//}
+//
+//// this can be used to update the overall last comment
+//function patchGist(content) {
+//  sendGithubRequest('PATCH', '/gists/90095144cc601cf2030b', content);
+//}
+//
+//function postGist(content) {
+//  sendGithubRequest('POST', '/gists', content);
+//}
 
 function composeAndPostPR(formData) {
-  if (!formData) { return; }
-  formData.name = formData.name || "anonymous";
-  console.log(formData);
+//  if (!formData) { return; }
+//  formData.name = formData.name || "anonymous";
+//  // git branch
+//  exec("cd "+options.local_repo+" && git checkout -b "+formData.nonce);
+//  // change source file
+//  exec("echo \"\n\n____\n\n**"+formData.name+"** posted a message:\n\n> "
+//       +formData.message+"\n\n\" >> "+options.local_repo+"/content/"+formData.file.replace("html","md"));
+//  // git commit
+//  exec("cd "+options.local_repo+" && git commit -m \""+formData.name+": "+formData.message+"\" content");
+//  // git push - fails if the branch already exists - -f works but is dangerous thats why we use a nonce 
+//  exec("cd "+options.local_repo+" && git push https://"+options.token+"@github.com/linse/zeckernews.git "+formData.nonce);
+//  exec("git checkout master");
   composePR(formData, function (error, stdout, stderr) { postPR(formData); }); 
 }
 
 function puts(error, stdout, stderr) { sys.puts(stdout) }
 function devnull(error, stdout, stderr) { }
 
-// TODO get rid of all the exec
 function composePR(formData, callback) {
-  exec("cd "+options.local_repo
-  +" && git checkout -b "+formData.name // TODO what if branch exists
+  // git branch
+  exec("cd "+options.local_repo+" && git checkout -b "+formData.nonce
+  // change source file
   +" && echo \"\n\n____\n\n**"+formData.name+"** posted a message:\n\n> "+formData.message
-  +"\n\n >> "+options.local_repo+"/content/"+formData.file.replace("html","md") // TODO optionize
-  +" && git commit -m "+formData.message+" content"
-  // pushing doesnt seem to work in some cases (see makef)! only after we restart the server
-  +" && git push https://"+options.token+"@github.com/linse/zeckernews.git "+formData.name
+  +"\n\n\" >> "+options.local_repo+"/content/"+formData.file.replace("html","md") // TODO optionize
+  // git commit
+  +" && git commit -m \""+formData.name+": "+formData.message+"\" content"
+  // git push - fails if the branch already exists - -f works but is dangerous thats why we use a nonce 
+  +" && git push https://"+options.token+"@github.com/linse/zeckernews.git "+formData.nonce
   +" ; git checkout master", callback);
 }
 
 function postPR(formData) {
-  var data = '{"title":"Comment PR: '+formData.message+'","body":"from the form","head":"'+formData.name+'","base":"master"}';
+  var data = '{"title":"Comment PR from '+formData.name+'","body":"from the form","head":"'+formData.nonce+'","base":"master"}';
   console.log("postPR");
   console.log(data);
   sendGithubRequest('POST', '/repos/linse/zeckernews/pulls', data);
@@ -104,6 +117,15 @@ function sendGithubRequest(method, path, content) {
   post_req.end();
 }
 
+function nonce(length) {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    for(var i = 0; i < length; i++) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+    return text;
+}
+
 function deserializeForm(string) {
   var parts = string.split("&");
   if (parts.length != 3) {
@@ -115,7 +137,8 @@ function deserializeForm(string) {
     return p.split("=")[1]
   } );
   // decode as last step - so we don't remove pluses from form input
-  return { 'file': parts[0],
-           'name': decodeURIComponent(parts[1].replace(/\+/g," ")),
-        'message': decodeURIComponent(parts[2].replace(/\+/g," ")) };
+  return { 'nonce': nonce(16),
+            'file': parts[0],
+            'name': decodeURIComponent(parts[1].replace(/\+/g," ")),
+         'message': decodeURIComponent(parts[2].replace(/\+/g," ")) };
 }
