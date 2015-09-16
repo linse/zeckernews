@@ -70,6 +70,7 @@ function composePR(formData, callback) {
 
 function postPR(formData) {
   var data = '{"title":"Comment PR: '+formData.message+'","body":"from the form","head":"'+formData.name+'","base":"master"}';
+  console.log("postPR");
   console.log(data);
   sendGithubRequest('POST', '/repos/linse/zeckernews/pulls', data);
 }

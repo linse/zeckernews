@@ -24,7 +24,8 @@ generate-index:
 	git pull
 	(echo "# Posts Index"; \
 	for f in `ls $(indir)`; \
-		do echo "- [$${f//-/\/}](https://"$(host)/"$${f/%.*/.html}) hallo $$h"; \
+		do b=$${f%.*}; y=$${b/-/\/}; m=$${y/-/\/};  d=$${m/-/\/}; t=$$(dirname $$d) \
+                   echo "- [$$t $$d $${d##*\/}](https://"$(host)"/$$d.html)"; \
 	done) | pandoc -f markdown -o $(outdir)/index.html -B before.html -A after.html --css style.css;
 
 set-style:
