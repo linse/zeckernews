@@ -1,6 +1,6 @@
 var https = require('https');
 var fs = require('fs');
-var sys = require('sys')
+var sys = require('sys');
 var exec = require('child_process').exec;
 
 var options = {
@@ -17,9 +17,13 @@ var server = https.createServer(options, function (req, res) {
     body += chunk;
   });
   req.on('end', function () {
-    // rebuild when webhook is called
-    //console.log(body);
-    rebuildZeckernews(puts);
+    // webhook is called
+    pullReq = JSON.parse(body);
+    // rebuild when pr was closed by merge
+    if (pullReq.action == 'closed'
+     && pullReq.pull_request.merged_at != null) {
+        rebuildZeckernews(puts);
+    }
     res.end("Send me moar pull requests!");
   });
 })
@@ -37,5 +41,5 @@ function puts(error, stdout, stderr) { sys.puts(stdout) }
 // TODO get rid of all the exec
 function rebuildZeckernews(callback) {
   exec("cd "+options.local_repo
-  +" && git pull && make generate", callback);
+  +" && git checkout master && git pull && make generate", callback);
 }

@@ -33,40 +33,9 @@ console.log("🎂");
 
 
 
-//var counter = 0;
-//
-//function composeAndPostGist(content, counter) {
-//  patchGist('{"description":"🐞zeckernews","public":"true","files":{"Comment'
-//    +counter+'.txt":{"content":"'+deserializeMessage(content)+'"}}');
-//}
-//
-//// this can be used to update the overall last comment
-//function patchGist(content) {
-//  sendGithubRequest('PATCH', '/gists/90095144cc601cf2030b', content);
-//}
-//
-//function postGist(content) {
-//  sendGithubRequest('POST', '/gists', content);
-//}
-
 function composeAndPostPR(formData) {
-//  if (!formData) { return; }
-//  formData.name = formData.name || "anonymous";
-//  // git branch
-//  exec("cd "+options.local_repo+" && git checkout -b "+formData.nonce);
-//  // change source file
-//  exec("echo \"\n\n____\n\n**"+formData.name+"** posted a message:\n\n> "
-//       +formData.message+"\n\n\" >> "+options.local_repo+"/content/"+formData.file.replace("html","md"));
-//  // git commit
-//  exec("cd "+options.local_repo+" && git commit -m \""+formData.name+": "+formData.message+"\" content");
-//  // git push - fails if the branch already exists - -f works but is dangerous thats why we use a nonce 
-//  exec("cd "+options.local_repo+" && git push https://"+options.token+"@github.com/linse/zeckernews.git "+formData.nonce);
-//  exec("git checkout master");
   composePR(formData, function (error, stdout, stderr) { postPR(formData); }); 
 }
-
-function puts(error, stdout, stderr) { sys.puts(stdout) }
-function devnull(error, stdout, stderr) { }
 
 function composePR(formData, callback) {
   // git branch
@@ -88,28 +57,19 @@ function postPR(formData) {
   sendGithubRequest('POST', '/repos/linse/zeckernews/pulls', data);
 }
 
-function getBranches() {
-  sendGithubRequest('GET','/repos/linse/zeckernews/git/refs/heads','');
-}
-
-function pushBranch(branchname,sha) {
-  var data = '{"ref":"/refs/heads/'+branchname+'","sha":"'+sha+'"}';
-  sendGithubRequest('GET','/repos/linse/zeckernews/git/refs',data);
-}
-
 function sendGithubRequest(method, path, content) {
   var post_req = https.request({
     method: method,
     hostname: 'api.github.com',
     path: path,
     headers: { 'Authorization': 'token '+options.token,
-               'User-Agent': 'zeckernews' },
+               'User-Agent': '🐞zzeckernews' },
   },function(res) {
     res.setEncoding('utf8');
     res.on('data', function (chunk) {
-        //console.log('Response: ' + chunk);
+        // console.log('Response: ' + chunk);
     });
-    // TODO signal when we are done - return gist id?
+    // TODO signal when we are done
   });
    
   // post the data
