@@ -24,6 +24,8 @@ var server = https.createServer(options, function (req, res) {
      && pullReq.pull_request.merged_at != null) {
         // gucke alle PR die nach mir kommen an, und schreibe ihre patches so um, dass sie hierunter gehanggt werden koennen
         // OODER stashe sie lokal und habe immer nur einen pull request offen
+        removeBranch(pullReq, puts);
+        rebaseOpenPRs(puts);
         rebuildZeckernews(puts);
     }
     res.end("Send me moar pull requests!");
@@ -44,4 +46,14 @@ function puts(error, stdout, stderr) { sys.puts(stdout) }
 function rebuildZeckernews(callback) {
   exec("cd "+options.local_repo
   +" && git checkout master && git pull && make generate", callback);
+}
+
+function rebaseOpenPRs(callback) {
+}
+
+function removeBranch(pullReq,callback) {
+  // remove all merged branches that are not master
+  exec("cd "+options.local_repo
+  +" && git branch --merged | grep -v 'master' | xargs -n 1 git branch -d", callback);
+  //console.log(pullReq);
 }
