@@ -24,7 +24,7 @@ var server = https.createServer(options, function (req, res) {
      && pullReq.pull_request.merged_at != null) {
         // gucke alle PR die nach mir kommen an, und schreibe ihre patches so um, dass sie hierunter gehanggt werden koennen
         // OODER stashe sie lokal und habe immer nur einen pull request offen
-        removeBranch(pullReq, puts);
+        removeBranch(puts);
         rebaseOpenPRs(puts);
         rebuildZeckernews(puts);
     }
@@ -49,11 +49,12 @@ function rebuildZeckernews(callback) {
 }
 
 function rebaseOpenPRs(callback) {
+  // git format-patch origin/master makes patches from all commits on current branch that are not yet in origin/master
+  // problem: we are in different branches!
 }
 
-function removeBranch(pullReq,callback) {
+function removeBranch(callback) {
   // remove all merged branches that are not master
   exec("cd "+options.local_repo
-  +" && git branch --merged | grep -v 'master' | xargs -n 1 git branch -d", callback);
-  //console.log(pullReq);
+  +" && git pull && git branch --merged | grep -v 'master' | xargs -n 1 git branch -d", callback);
 }
