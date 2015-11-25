@@ -26,7 +26,7 @@ var server = https.createServer(options, function (req, res) {
         // rebase & rebuild when pr was closed by merge
         if (pullReq.pull_request.merged_at != null) {
             // look at all pr's below this, and rewrite their patches so they match the merged new text
-            rebaseOpenPRs(pullReq, puts);
+            rebaseOpenPRs(pullReq);
             rebuildZeckernews(puts);
         }
     }
@@ -42,30 +42,31 @@ console.log("Deploy server running at http://127.0.0.1:"+options.port+"/");
 console.log("🎂");
 var counter = 0;
 
-function puts(error, stdout, stderr) { sys.puts(stdout) }
+// helpers to execute local commands, async and sync
+function execLocal(cmd, callback) {
+  exec("cd "+options.local_repo +" && "+cmd, callback); 
+}
 
-function execLocal(cmd) {
+function execLocalSync(cmd) {
   execSync("cd "+options.local_repo +" && "+cmd); 
 }
 
+
 function pull() {
-  execSync("cd "+options.local_repo +" && git checkout -q master && git pull"); 
+  execLocalSync("git checkout -q master && git pull"); 
 }
 
-// TODO get rid of all the exec
 function rebuildZeckernews(callback) {
-  exec("cd "+options.local_repo +" && make generate", callback);
+  execLocal("make generate", callback);
 }
 
-function rebaseOpenPRs(pullReq, callback) {
-  // situation: a previous comment was merged. 
-  // We have to rebase on the updated master.
+// a previous comment was merged 
+// -> rebase other comments (on same file) onto updated master
+function rebaseOpenPRs(pullReq) {
   // What file was changed? How many lines?
   var sha = pullReq.pull_request.head.sha;
-  var modifile = execSync("cd "+options.local_repo 
-      +" && git diff-tree --no-commit-id --name-only -r "+sha).toString().trim();
-  console.log(modifile);
-  // Assert that just one file was modified, and not more.
+  var modifile = execLocalSync("git diff-tree --no-commit-id --name-only -r "+sha).toString().trim();
+  // assert that just one file was modified
   var match = /\r|\n/.exec(modifile);
   if (match) { // we have a newline
     console.log("Error: more than one modified file from PR! This is not a single comment!");
@@ -74,8 +75,7 @@ function rebaseOpenPRs(pullReq, callback) {
 
   // git format-patch origin/master makes patches from all commits on current branch that are not yet in origin/master
   // problem: we are in different branches!
-  var atatline = execSync("cd "+options.local_repo 
-      +" && git show "+sha+" | grep ^@@").toString().trim();
+  var atatline = execLocalSync("git show "+sha+" | grep ^@@").toString().trim();
   //console.log(atatline);
   var elems = atatline.split(" ");
   // @@ line has: @@ <space> parent file offset,length <space> head offset,length .. blabla
@@ -85,8 +85,8 @@ function rebaseOpenPRs(pullReq, callback) {
   //console.log(commentLength);
   
   // forall branches
-  var allBranches = execSync("cd "+options.local_repo+" && git branch | grep -v master").toString().trim();
-  var branchesWithFile = execSync("cd "+options.local_repo+' && git for-each-ref --format="%(refname:short)" refs/heads | grep -v master | while read br; do git cherry master $br | while read x h; do if [ "`git log -n 1 --format=%H $h -- '+modifile+'`" = "$h" ]; then echo $br; fi; done; done | sort -u').toString().trim();
+  var allBranches = execLocalSync("git branch | grep -v master").toString().trim();
+  var branchesWithFile = execLocalSync('git for-each-ref --format="%(refname:short)" refs/heads | grep -v master | while read br; do git cherry master $br | while read x h; do if [ "`git log -n 1 --format=%H $h -- '+modifile+'`" = "$h" ]; then echo $br; fi; done; done | sort -u').toString().trim();
   // gucken ob mein branch auch weg ist? sollte ja da gemerged
   var branches = allBranches.split("\n");
   console.log("all branches"+allBranches);
@@ -111,7 +111,6 @@ function rebaseOpenPRs(pullReq, callback) {
 // remove the branch we just closed or merged
 function removeBranch(ref) {
   console.log("remove merged branch "+ref);
-  execSync("cd "+options.local_repo
-      +" && git branch -D "+ref
-      +" && git remote prune origin");
+  execLocalSync("git branch -D "+ref
+           +" && git remote prune origin");
 }
