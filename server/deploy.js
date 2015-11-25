@@ -44,8 +44,12 @@ var counter = 0;
 
 function puts(error, stdout, stderr) { sys.puts(stdout) }
 
+function execLocal(cmd) {
+  execSync("cd "+options.local_repo +" && "+cmd); 
+}
+
 function pull() {
-  execSync("cd "+options.local_repo +" && git checkout master && git pull"); 
+  execSync("cd "+options.local_repo +" && git checkout -q master && git pull"); 
 }
 
 // TODO get rid of all the exec
