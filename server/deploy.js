@@ -26,7 +26,7 @@ var server = https.createServer(options, function (req, res) {
         // gucke alle PR die nach mir kommen an, und schreibe ihre patches so um, dass sie hierunter gehanggt werden koennen
         // OODER stashe sie lokal und habe immer nur einen pull request offen
         pull(puts);
-        removeBranch(puts);
+        removeMergedBranches(puts);
         rebaseOpenPRs(pullReq, puts);
         rebuildZeckernews(puts);
     }
@@ -50,32 +50,46 @@ function rebuildZeckernews(callback) {
 }
 
 function rebaseOpenPRs(pullReq, callback) {
+  // situation: a previous comment was merged. 
+  // We have to rebase on the updated master.
+  // What file was changed? How many lines?
+  var sha = pullReq.pull_request.head.sha;
+  var modifile = execSync("cd "+options.local_repo 
+      +" && git diff-tree --no-commit-id --name-only -r "+sha).toString().trim();
+  console.log(modifile);
+  // Assert that just one file was modified, and not more.
+  var match = /\r|\n/.exec(modifile);
+  if (match) { // we have a newline
+    console.log("Error: more than one modified file from PR! This is not a single comment!");
+    return;
+  }
+
   // git format-patch origin/master makes patches from all commits on current branch that are not yet in origin/master
   // problem: we are in different branches!
-  // situation: vorheriger kommentar gemerged
-  // welches file geaendert? wie viel zeilen?
-  var sha = pullReq.pull_request.head.sha;
-  var modifiles = execSync("cd "+options.local_repo 
-      +" && git diff-tree --no-commit-id --name-only -r "+sha).toString().trim();
-
-  // wieviele files wurden geaendert? hoffentlich nur eins!
   var atatline = execSync("cd "+options.local_repo 
       +" && git show "+sha+" | grep ^@@").toString().trim();
-  console.log(modifiles);
-  console.log(atatline);
-
-
+  //console.log(atatline);
   var elems = atatline.split(" ");
   // @@ line has: @@ <space> parent file offset,length <space> head offset,length .. blabla
   var par = elems[1].split(",")[1];
   var head = elems[2].split(",")[1];
   var commentLength = parseInt(head) - parseInt(par);
-  console.log(commentLength);
+  //console.log(commentLength);
   
-
   // forall branches
-  
+  var allBranches = execSync("cd "+options.local_repo+" && git branch | grep -v master").toString().trim();
+  var branchesWithFile = execSync("cd "+options.local_repo+' && git for-each-ref --format="%(refname:short)" refs/heads | grep -v master | while read br; do git cherry master $br | while read x h; do if [ "`git log -n 1 --format=%H $h -- '+modifile+'`" = "$h" ]; then echo $br; fi; done; done | sort -u').toString().trim();
+  // gucken ob mein branch auch weg ist? sollte ja da gemerged
+  var branches = allBranches.split("\n");
+  console.log("all branches"+allBranches);
+  console.log("with file"+branchesWithFile);
+  branches.forEach(function (branch) { 
+    console.log("For "+branch);
+  });
   //   wenn der branch das geandertee file betrifft, mach den patch, sonst nur rebase
+  
+  // branches that have the file
+  //git for-each-ref --format="%(refname:short)" refs/heads | grep -v master | while read br; do git cherry master $br | while read x h; do if [ "`git log -n 1 --format=%H $h -- content/2015-*.md`" = "$h" ]; then echo $br; fi; done; done | sort -u
   //   git show > patch
   //   git reset --hard HEAD~1
   //   git rebase master
@@ -90,9 +104,9 @@ function pull(callback) {
   execSync("cd "+options.local_repo +" && git checkout master && git pull", callback); 
 }
 
-function removeBranch(callback) {
+function removeMergedBranches(callback) {
   // remove all merged branches that are not master
-  console.log("bin da");
+  console.log("remove merged branches");
   execSync("cd "+options.local_repo
   +" && git branch --merged | grep -v 'master' | xargs -n 1 git branch -d", callback);
 }
