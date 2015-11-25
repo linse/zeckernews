@@ -20,15 +20,15 @@ var server = https.createServer(options, function (req, res) {
   req.on('end', function () {
     // webhook is called
     pullReq = JSON.parse(body);
-    // rebuild when pr was closed by merge
-    if (pullReq.action == 'closed'
-     && pullReq.pull_request.merged_at != null) {
-        // gucke alle PR die nach mir kommen an, und schreibe ihre patches so um, dass sie hierunter gehanggt werden koennen
-        // OODER stashe sie lokal und habe immer nur einen pull request offen
-        pull(puts);
-        removeMergedBranches(puts);
-        rebaseOpenPRs(pullReq, puts);
-        rebuildZeckernews(puts);
+    if (pullReq.action == 'closed') {
+        pull();
+        removeBranch(pullReq.pull_request.head.ref);
+        // rebase & rebuild when pr was closed by merge
+        if (pullReq.pull_request.merged_at != null) {
+            // look at all pr's below this, and rewrite their patches so they match the merged new text
+            rebaseOpenPRs(pullReq, puts);
+            rebuildZeckernews(puts);
+        }
     }
     res.end("Send me moar pull requests!");
   });
@@ -43,6 +43,10 @@ console.log("🎂");
 var counter = 0;
 
 function puts(error, stdout, stderr) { sys.puts(stdout) }
+
+function pull() {
+  execSync("cd "+options.local_repo +" && git checkout master && git pull"); 
+}
 
 // TODO get rid of all the exec
 function rebuildZeckernews(callback) {
@@ -100,13 +104,10 @@ function rebaseOpenPRs(pullReq, callback) {
   //    
 }
 
-function pull(callback) {
-  execSync("cd "+options.local_repo +" && git checkout master && git pull", callback); 
-}
-
-function removeMergedBranches(callback) {
-  // remove all merged branches that are not master
-  console.log("remove merged branches");
+// remove the branch we just closed or merged
+function removeBranch(ref) {
+  console.log("remove merged branch "+ref);
   execSync("cd "+options.local_repo
-  +" && git branch --merged | grep -v 'master' | xargs -n 1 git branch -d", callback);
+      +" && git branch -D "+ref
+      +" && git remote prune origin");
 }
