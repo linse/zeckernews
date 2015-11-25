@@ -48,8 +48,10 @@ function execLocal(cmd, callback) {
 }
 
 function execLocalSync(cmd) {
-  execSync("cd "+options.local_repo +" && "+cmd); 
+  return execSync("cd "+options.local_repo +" && "+cmd).toString().trim(); 
 }
+
+function puts(error, stdout, stderr) { console.log(stdout) }
 
 
 function pull() {
@@ -60,44 +62,54 @@ function rebuildZeckernews(callback) {
   execLocal("make generate", callback);
 }
 
-// a previous comment was merged 
-// -> rebase other comments (on same file) onto updated master
-function rebaseOpenPRs(pullReq) {
-  // What file was changed? How many lines?
-  var sha = pullReq.pull_request.head.sha;
-  var modifile = execLocalSync("git diff-tree --no-commit-id --name-only -r "+sha).toString().trim();
+// What file was changed? How many lines?
+function modifiedFile(sha) {
+  var modifile = execLocalSync("git diff-tree --no-commit-id --name-only -r "+sha);
   // assert that just one file was modified
-  var match = /\r|\n/.exec(modifile);
-  if (match) { // we have a newline
+  var matchNewline = /\r|\n/.exec(modifile);
+  if (matchNewline) {
     console.log("Error: more than one modified file from PR! This is not a single comment!");
-    return;
+    process.exit(1); // BOOOM!
   }
+  return modifile;
+}
 
-  // git format-patch origin/master makes patches from all commits on current branch that are not yet in origin/master
-  // problem: we are in different branches!
+function commentLength(sha) {
   var atatline = execLocalSync("git show "+sha+" | grep ^@@").toString().trim();
   //console.log(atatline);
   var elems = atatline.split(" ");
   // @@ line has: @@ <space> parent file offset,length <space> head offset,length .. blabla
   var par = elems[1].split(",")[1];
   var head = elems[2].split(",")[1];
-  var commentLength = parseInt(head) - parseInt(par);
-  //console.log(commentLength);
+  return parseInt(head) - parseInt(par);
+}
+
+// a previous comment was merged 
+// -> rebase other comments (on same file) onto updated master
+function rebaseOpenPRs(pullReq) {
+  var sha = pullReq.pull_request.head.sha;
+  console.log("Yo we just merged "+sha+" and gotta rebase all affected branches!")
+  var file = modifiedFile(sha);
+
+  // compute comment length from patch
+  var length = commentLength(sha);
+  console.log(length);
   
   // forall branches
-  var allBranches = execLocalSync("git branch | grep -v master").toString().trim();
-  var branchesWithFile = execLocalSync('git for-each-ref --format="%(refname:short)" refs/heads | grep -v master | while read br; do git cherry master $br | while read x h; do if [ "`git log -n 1 --format=%H $h -- '+modifile+'`" = "$h" ]; then echo $br; fi; done; done | sort -u').toString().trim();
+  var allBranches = execLocalSync("git branch | grep -v master");
+  var branchesWithFile = execLocalSync('git for-each-ref --format="%(refname:short)" refs/heads | grep -v master '
+      +'| while read br; do git cherry master $br '
+      +'| while read x h; do if [ "`git log -n 1 --format=%H $h -- '+file+'`" = "$h" ]; then echo $br; fi; done; done | sort -u');
   // gucken ob mein branch auch weg ist? sollte ja da gemerged
   var branches = allBranches.split("\n");
+  var affected = branchesWithFile.split("\n");
   console.log("all branches"+allBranches);
   console.log("with file"+branchesWithFile);
   branches.forEach(function (branch) { 
-    console.log("For "+branch);
-  });
-  //   wenn der branch das geandertee file betrifft, mach den patch, sonst nur rebase
-  
-  // branches that have the file
-  //git for-each-ref --format="%(refname:short)" refs/heads | grep -v master | while read br; do git cherry master $br | while read x h; do if [ "`git log -n 1 --format=%H $h -- content/2015-*.md`" = "$h" ]; then echo $br; fi; done; done | sort -u
+    console.log("Rebase branch "+branch);
+    // wenn der branch das geandertee file betrifft, mach den patch, sonst nur rebase
+    if (affected.indxOf(branch) >= 0) {
+      console.log("Update patch for branch "+branch);
   //   git show > patch
   //   git reset --hard HEAD~1
   //   git rebase master
@@ -105,7 +117,9 @@ function rebaseOpenPRs(pullReq) {
   //   aendere die zeilennummer in dem @@ (hochzaehlen um hinzugekommene zeilen)
 
   //   git am < patch
-  //    
+    }
+  });
+  
 }
 
 // remove the branch we just closed or merged
