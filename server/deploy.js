@@ -84,33 +84,41 @@ function commentLength(sha) {
   return parseInt(head) - parseInt(par);
 }
 
+function getBranches(file) {
+  var allBranches = execLocalSync("git branch | grep -v master");
+  var branchesWithFile = execLocalSync('git for-each-ref --format="%(refname:short)" refs/heads | grep -v master '
+      +'| while read br; do git cherry master $br '
+      +'| while read x h; do if [ "`git log -n 1 --format=%H $h -- '+file+'`" = "$h" ]; then echo $br; fi; done; done | sort -u');
+  return { all: allBranches.split("\n"), 
+           withFile: branchesWithFile.split("\n") };
+}
+
+function getPatch(branch) {
+  return execLocalSync("git show "+branch);
+}
+
 // a previous comment was merged 
 // -> rebase other comments (on same file) onto updated master
 function rebaseOpenPRs(pullReq) {
   var sha = pullReq.pull_request.head.sha;
   console.log("Yo we just merged "+sha+" and gotta rebase all affected branches!")
-  var file = modifiedFile(sha);
 
   // compute comment length from patch
   var length = commentLength(sha);
   console.log(length);
   
-  // forall branches
-  var allBranches = execLocalSync("git branch | grep -v master");
-  var branchesWithFile = execLocalSync('git for-each-ref --format="%(refname:short)" refs/heads | grep -v master '
-      +'| while read br; do git cherry master $br '
-      +'| while read x h; do if [ "`git log -n 1 --format=%H $h -- '+file+'`" = "$h" ]; then echo $br; fi; done; done | sort -u');
-  // gucken ob mein branch auch weg ist? sollte ja da gemerged
-  var branches = allBranches.split("\n");
-  var affected = branchesWithFile.split("\n");
-  console.log("all branches"+allBranches);
-  console.log("with file"+branchesWithFile);
-  branches.forEach(function (branch) { 
+  // forall branches:
+  // if branch affected by changed file, update patch, otherwise just rebase
+  var file = modifiedFile(sha);
+  var branches = getBranches(file);
+  branches.all.forEach(function (branch) { 
     console.log("Rebase branch "+branch);
-    // wenn der branch das geandertee file betrifft, mach den patch, sonst nur rebase
-    if (affected.indxOf(branch) >= 0) {
+    if (branches.withFile.indexOf(branch) >= 0) {
       console.log("Update patch for branch "+branch);
-  //   git show > patch
+      //   git show > patch
+      var patch = getPatch(branch);
+      console.log("GOT PATCH");
+      console.log(patch);
   //   git reset --hard HEAD~1
   //   git rebase master
   //   // patch the patch
