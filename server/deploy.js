@@ -35,7 +35,7 @@ var server = https.createServer(options, function (req, res) {
 })
 
 // Listen on given port, IP defaults to 127.0.0.1
-server.listen(options.port);
+//server.listen(options.port);
 
 // Put a friendly message on the terminal
 console.log("Deploy server running at http://127.0.0.1:"+options.port+"/");
@@ -74,6 +74,8 @@ function modifiedFile(sha) {
   return modifile;
 }
 
+// TODO we have to do this again for patching.. how about we record the patch, 
+// find the line and replace it?
 function commentLength(sha) {
   var atatline = execLocalSync("git show "+sha+" | grep ^@@").toString().trim();
   //console.log(atatline);
@@ -93,8 +95,19 @@ function getBranches(file) {
            withFile: branchesWithFile.split("\n") };
 }
 
+// TODO double check that it's just one hunk
 function getPatch(branch) {
   return execLocalSync("git show "+branch);
+}
+
+function updateIfAtAtLine(c, i, a) {
+  // TODO uebergebe die laenge, do something!
+  return c;
+}
+
+function updatePatch(patch) {
+  // do this line by line
+  return patch.split('\n').map(updateIfAtAtLine).join('\n')
 }
 
 // a previous comment was merged 
