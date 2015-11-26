@@ -154,16 +154,22 @@ function rebaseOpenPRs(pullReq) {
       var patch = getPatch(branch);
       console.log("GOT PATCH");
       console.log(patch);
-  // 
-  //   git reset --hard HEAD~1
-  //   git rebase master
-
       // patch the patch
+      // aendere die zeilennummer in dem @@ (hochzaehlen um hinzugekommene zeilen)
       var updatedPatch = updatePatch(patch, length);
       console.log(updatedPatch);
-  //   aendere die zeilennummer in dem @@ (hochzaehlen um hinzugekommene zeilen)
 
-  //   git am < patch
+      // git reset --hard HEAD~1
+      // git rebase master
+      execLocalSync("git branch -f "+branch+" master");
+      execLocalSync("git checkout "+branch);
+      var patchfilename = branch+".mod.patch"
+      execLocalSync("echo "+modifiedPatch+" > "+patchfilename);
+      // git am < patch
+      var res = execLocalSync("git am <"+patchfilename);
+      console.log(res);
+
+
     }
   });
   
