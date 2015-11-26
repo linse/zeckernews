@@ -40,8 +40,8 @@ function composeAndPostPR(formData) {
 function composePR(formData, callback) {
   // git branch
   exec("cd "+options.local_repo+" && git checkout -b "+formData.nonce
-  // change source file
-  +" && echo \"\n\n____\n\n**"+formData.name+"** posted a message:\n\n> "+formData.message
+  // change source file - three newlines for patch trickery on PR step later
+  +" && echo \"\n\n\n____\n\n**"+formData.name+"** posted a message:\n\n> "+formData.message
   +"\n\n\" >> "+options.local_repo+"/content/"+formData.file.replace("html","md") // TODO optionize
   // git commit
   +" && git commit -m \""+formData.name+": "+formData.message+"\" content"
@@ -90,7 +90,7 @@ function deserializeForm(string) {
   var parts = string.split("&");
   if (parts.length != 3) {
     console.log("need request with filename, username, message from form!");
-    return; //throw "need request with filename, username, message from form!";
+    return;
   }
   // throw away part before =, replace pluses which encode space
   parts = parts.map( function (p) {

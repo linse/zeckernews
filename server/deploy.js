@@ -35,7 +35,7 @@ var server = https.createServer(options, function (req, res) {
 })
 
 // Listen on given port, IP defaults to 127.0.0.1
-//server.listen(options.port);
+server.listen(options.port);
 
 // Put a friendly message on the terminal
 console.log("Deploy server running at http://127.0.0.1:"+options.port+"/");
@@ -74,16 +74,34 @@ function modifiedFile(sha) {
   return modifile;
 }
 
-// TODO we have to do this again for patching.. how about we record the patch, 
-// find the line and replace it?
+// get comment length from merged change's sha
 function commentLength(sha) {
-  var atatline = execLocalSync("git show "+sha+" | grep ^@@").toString().trim();
-  //console.log(atatline);
+  var atatline = execLocalSync("git show "+sha+" | grep ^@@");
   var elems = atatline.split(" ");
   // @@ line has: @@ <space> parent file offset,length <space> head offset,length .. blabla
   var par = elems[1].split(",")[1];
   var head = elems[2].split(",")[1];
   return parseInt(head) - parseInt(par);
+}
+
+// elem is offset,length - and could be negative
+// TODO check if neg + neg are combined
+function updateOffset(elem, length) {
+  return elem.split(",").map(function (e,i,a) { 
+               if (i==0) {
+                 return parseInt(e)+length
+               } else {
+                 return e
+               } } ).join(",");
+}
+
+// update the first number of each field.
+function updateLine(atatline, length) {
+  var elems = atatline.split(" ");
+  // @@ line has: @@ <space> parent file offset,length <space> head offset,length .. blabla
+  elems[1] = updateOffset(elems[1],-length); // offset of parent is negative
+  elems[2] = updateOffset(elems[2], length);
+  return elems.join(" ");
 }
 
 function getBranches(file) {
@@ -100,14 +118,19 @@ function getPatch(branch) {
   return execLocalSync("git show "+branch);
 }
 
-function updateIfAtAtLine(c, i, a) {
-  // TODO uebergebe die laenge, do something!
-  return c;
+function updateIfAtAtLine(line,len) {
+  var matchAtAt = /@@/.exec(line);
+  if (matchAtAt) {
+    return updateLine(line, len);
+  }
+  return line;
 }
 
-function updatePatch(patch) {
+function updatePatch(patch, commentLen) {
   // do this line by line
-  return patch.split('\n').map(updateIfAtAtLine).join('\n')
+  return patch.split('\n')
+              .map(function (line) { return updateIfAtAtLine(line, commentLen) })
+              .join('\n');
 }
 
 // a previous comment was merged 
@@ -118,7 +141,6 @@ function rebaseOpenPRs(pullReq) {
 
   // compute comment length from patch
   var length = commentLength(sha);
-  console.log(length);
   
   // forall branches:
   // if branch affected by changed file, update patch, otherwise just rebase
@@ -132,9 +154,13 @@ function rebaseOpenPRs(pullReq) {
       var patch = getPatch(branch);
       console.log("GOT PATCH");
       console.log(patch);
+  // 
   //   git reset --hard HEAD~1
   //   git rebase master
-  //   // patch the patch
+
+      // patch the patch
+      var updatedPatch = updatePatch(patch, length);
+      console.log(updatedPatch);
   //   aendere die zeilennummer in dem @@ (hochzaehlen um hinzugekommene zeilen)
 
   //   git am < patch
@@ -145,7 +171,7 @@ function rebaseOpenPRs(pullReq) {
 
 // remove the branch we just closed or merged
 function removeBranch(ref) {
-  console.log("remove merged branch "+ref);
+  console.log("PR closed, remove local branch "+ref);
   execLocalSync("git branch -D "+ref
            +" && git remote prune origin");
 }
