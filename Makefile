@@ -1,17 +1,16 @@
 SHELL := /bin/bash
 
-# where is the host config:
+# host config:
 # /etc/nginx/sites-available/linse.me
 
-# where are my files:
+# html files to be served:
 # ~/public_html/linse.me/public
 
 indir = content
 outdir = /home/linse/public_html/linse.me/public
 host = linse.me
 
-all:
-	generate generate-index
+all: generate generate-index
 
 generate:
 	git pull

@@ -97,6 +97,18 @@ textarea {
   margin: 1em auto;
 }
 
+/* for box. fancyindex */
+table, table a {
+  color : hotpink;
+}
+
+table {
+  background-color: lightgray;
+  margin: 20px 0px;
+  width: 80%;
+}
+/* end */
+
 .figure {
   overflow: hidden;
   height: 240px;

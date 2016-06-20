@@ -12,6 +12,18 @@ var options = {
   local_repo: '/home/linse/zeckernews'
 };
 
+// helpers to execute local commands, async and sync
+function execLocal(cmd, callback) {
+  exec("cd "+options.local_repo +" && "+cmd, callback); 
+}
+
+function execLocalSync(cmd) {
+  return execSync("cd "+options.local_repo +" && "+cmd).toString().trim(); 
+}
+
+function puts(error, stdout, stderr) { console.log(stdout) }
+
+
 var server = https.createServer(options, function (req, res) {
   var body = "";
   req.on('data', function (chunk) {
@@ -23,10 +35,13 @@ var server = https.createServer(options, function (req, res) {
     if (pullReq.action == 'closed') {
         pull();
         removeBranch(pullReq.pull_request.head.ref);
-        // rebase & rebuild when pr was closed by merge
+        // rebase & rebuild when pr was closed by merge - TODO and no leaf was merged whose deleted branch we will revisit then
         if (pullReq.pull_request.merged_at != null) {
             // look at all pr's below this, and rewrite their patches so they match the merged new text
-            rebaseOpenPRs(pullReq);
+            var otherBranches = execLocalSync('git branch -v | grep -v master');
+            if (otherBranches !== '') {
+                rebaseOpenPRs(pullReq);
+            }
             rebuildZeckernews(puts);
         }
     }
@@ -41,17 +56,6 @@ server.listen(options.port);
 console.log("Deploy server running at http://127.0.0.1:"+options.port+"/");
 console.log("🎂");
 var counter = 0;
-
-// helpers to execute local commands, async and sync
-function execLocal(cmd, callback) {
-  exec("cd "+options.local_repo +" && "+cmd, callback); 
-}
-
-function execLocalSync(cmd) {
-  return execSync("cd "+options.local_repo +" && "+cmd).toString().trim(); 
-}
-
-function puts(error, stdout, stderr) { console.log(stdout) }
 
 
 function pull() {
@@ -133,6 +137,41 @@ function updatePatch(patch, commentLen) {
               .join('\n');
 }
 
+function returnIfPlus(line) {
+  if (line.startsWith('+')) {
+    return updateLine(line, len);
+  }
+  return line;
+}
+
+
+function getPlusLines(patch) {
+  // do this line by line    // startsWith('+')
+  return patch.split('\n').filter(function (line) { return line.indexOf('+')===0 })
+}
+
+
+function getComment(patch) {
+  // take apart the patch to apply it
+  //var pluslinesString = execLocalSync("echo \""+patch+"\" | grep \"^+\"");
+  var pluslines = getPlusLines(patch);//pluslinesString.split("\n");
+
+  // file to change
+  var bfile = pluslines[0];
+  console.log(pluslines)
+  console.log(bfile)
+  // remove start "+++ b/" to get the file we wanna change
+  var filenameWithoutB = bfile.replace('+++ b/','')
+
+  // comment to put again for new commit
+  var addition = pluslines.slice(1,pluslines.length);
+  // remove first char from each line, the '+'
+  var linesWithoutPluses = addition.map(function (f) {return f.substring(1,f.length);})
+
+  return { filename : filenameWithoutB,
+           body: linesWithoutPluses.join("\n") }
+}
+
 // a previous comment was merged 
 // -> rebase other comments (on same file) onto updated master
 function rebaseOpenPRs(pullReq) {
@@ -150,26 +189,23 @@ function rebaseOpenPRs(pullReq) {
     console.log("Rebase branch "+branch);
     if (branches.withFile.indexOf(branch) >= 0) {
       console.log("Update patch for branch "+branch);
-      //   git show > patch
+      // save changes in the patch
       var patch = getPatch(branch);
-      console.log("GOT PATCH");
-      console.log(patch);
-      // patch the patch
-      // aendere die zeilennummer in dem @@ (hochzaehlen um hinzugekommene zeilen)
-      var updatedPatch = updatePatch(patch, length);
-      console.log(updatedPatch);
 
-      // git reset --hard HEAD~1
-      // git rebase master
+      // normal rebase would give us a conflict, so:
+      // we forget the commit (have it in the patch), rebase, and make the change again
       execLocalSync("git branch -f "+branch+" master");
       execLocalSync("git checkout "+branch);
-      var patchfilename = branch+".mod.patch"
-      execLocalSync("echo "+modifiedPatch+" > "+patchfilename);
-      // git am < patch
-      var res = execLocalSync("git am <"+patchfilename);
-      console.log(res);
-
-
+      var comment = getComment(patch);
+      console.log("should re-apply"+comment);
+      execLocalSync("echo \""+comment.body+"\" >> "+options.local_repo+"/"+comment.filename) // filename starts with "content"
+      // TODO length restrict comment.body
+      execLocalSync("git commit -m \"Merged comment branch "+branch+": "+comment.body+"\" content")
+      execLocalSync("git branch --set-upstream "+branch+" origin/"+branch);
+      // TODO THIS PULL FAILS
+      execLocalSync("git pull");
+      execLocalSync("git push -f origin "+branch);
+      execLocalSync("git checkout master");
     }
   });
   
@@ -177,7 +213,7 @@ function rebaseOpenPRs(pullReq) {
 
 // remove the branch we just closed or merged
 function removeBranch(ref) {
-  console.log("PR closed, remove local branch "+ref);
+  console.log("PR closed, removing local branch "+ref);
   execLocalSync("git branch -D "+ref
            +" && git remote prune origin");
 }
