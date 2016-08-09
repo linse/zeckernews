@@ -9,6 +9,7 @@ SHELL := /bin/bash
 indir = content
 outdir = /home/linse/public_html/linse.me/public
 host = linse.me
+VPATH = content
 
 all: generate generate-index
 
@@ -29,6 +30,24 @@ generate-index:
 
 set-style:
 	cp style.css $(outdir)
+
+# TODO: make slug lowercase
+post:
+	@read -p 'Title? ' title; \
+	date=$$(date +%Y-%m-%d); \
+	file=$(indir)/$$date-$${title// /-}.md; \
+	separator='---'; \
+	if [[ ! -s "$$file" ]]; then \
+ 	  printf "%s\ntitle: %s\ndate: %s\ntags: []\n%s\n\n" $$separator "$$title" $$date $$separator >> "$$file"; \
+	fi; \
+	vim +6 $$file;
+
+#	file=$(indir)/$$(date +%Y-%m-%d)-$${title// /-}.md; \
+#	if [ ! -s "$$file" ]; then \
+#	fi \
+# the right way:
+#$(outdir)/%.html: %.md
+#	pandoc $< -o $@
 
 ## made it https like this:
 #https://www.digitalocean.com/community/tutorials/how-to-create-an-ssl-certificate-on-nginx-for-ubuntu-14-04
