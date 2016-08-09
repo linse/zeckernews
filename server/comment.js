@@ -63,7 +63,7 @@ function sendGithubRequest(method, path, content) {
     hostname: 'api.github.com',
     path: path,
     headers: { 'Authorization': 'token '+options.token,
-               'User-Agent': '🐞zzeckernews' },
+               'User-Agent': 'zeckernews' },
   },function(res) {
     res.setEncoding('utf8');
     res.on('data', function (chunk) {

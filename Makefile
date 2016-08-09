@@ -13,19 +13,22 @@ VPATH = content
 
 all: generate generate-index
 
+# TODO order by time (post first and then comments)
 generate:
 	git pull
-	for f in `ls $(indir)`; \
-		do pandoc $(indir)/$$f -o $(outdir)/"$${f/%.*/.html}" -B before.html -A afterPost.html --css style.css; \
+	for p in `ls $(indir)`; \
+		do cat $(indir)/$$p/* | pandoc -o $(outdir)/"$$p.html" -B before.html -A afterPost.html --css style.css; \
 	done;
 
 # Todo generate link name from post title, generate rewritten link
+# b = base filename, dash separated; y = year dash replaced, m = month dash replaced, d = day dash replaced
+# t = title, w = when (human readable date)
 generate-index:
 	git pull
 	(echo "# Posts Index"; \
 	for f in `ls $(indir)`; \
-		do b=$${f%.*}; y=$${b/-/\/}; m=$${y/-/\/};  d=$${m/-/\/}; t=$$(dirname $$d) \
-                   echo "- [$$t $$d $${d##*\/}](https://"$(host)"/$$d.html)"; \
+		do b=$${f%.*}; y=$${b/-/\/}; m=$${y/-/\/};  d=$${m/-/\/}; t=$$(basename $$d); w=$$(dirname $$d) \
+                   echo "- [$$w $$t](https://"$(host)"/$$d.html)"; \
 	done) | pandoc -f markdown -o $(outdir)/index.html -B before.html -A after.html --css style.css;
 
 set-style:
@@ -34,13 +37,23 @@ set-style:
 # TODO: make slug lowercase
 post:
 	@read -p 'Title? ' title; \
-	date=$$(date +%Y-%m-%d); \
-	file=$(indir)/$$date-$${title// /-}.md; \
+	date=`date +%Y-%m-%d`; \
+  postdir=$(indir)/$$date-$${title// /-}; \
+  mkdir -p $$postdir; \
+	file=$$postdir/post.md; \
 	separator='---'; \
 	if [[ ! -s "$$file" ]]; then \
  	  printf "%s\ntitle: %s\ndate: %s\ntags: []\n%s\n\n" $$separator "$$title" $$date $$separator >> "$$file"; \
 	fi; \
 	vim +6 $$file;
+
+#postdir=$(indir)/$$date-$${title// /-}; \
+#  mkdir $(postdir); \
+#	separator='---'; \
+#	if [[ ! -s "$$file" ]]; then \
+# 	  printf "%s\ntitle: %s\ndate: %s\ntags: []\n%s\n\n" $$separator "$$title" $$date $$separator >> "$$file"; \
+#	fi; \
+#	vim +6 $$file;
 
 #	file=$(indir)/$$(date +%Y-%m-%d)-$${title// /-}.md; \
 #	if [ ! -s "$$file" ]; then \
