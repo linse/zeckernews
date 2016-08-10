@@ -38,10 +38,10 @@ var server = https.createServer(options, function (req, res) {
         // rebase & rebuild when pr was closed by merge - TODO and no leaf was merged whose deleted branch we will revisit then
         if (pullReq.pull_request.merged_at != null) {
             // look at all pr's below this, and rewrite their patches so they match the merged new text
-            var otherBranches = execLocalSync('git branch -v | grep -v master');
-            if (otherBranches !== '') {
+            //var otherBranches = execLocalSync('git branch -v | grep -v master');
+            //if (otherBranches !== '') {
                 //rebaseOpenPRs(pullReq);
-            }
+            //}
             rebuildZeckernews(puts);
         }
     }
