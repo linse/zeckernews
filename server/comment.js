@@ -42,7 +42,7 @@ function composePR(formData, callback) {
   exec("cd "+options.local_repo+" && git checkout -b "+formData.nonce
   // change source file - three newlines for patch trickery on PR step later
   +" && echo \"\n\n\n____\n\n**"+formData.name+"** posted a message:\n\n> "+formData.message
-  +"\n\n\" >> "+options.local_repo+"/content/"+formData.file.replace("html","md") // TODO optionize
+  +"\n\n\" >> "+options.local_repo+"/content/"+formData.file+"/comment"+formData.nonce+".md" // TODO optionize
   // git commit
   +" && git commit -m \""+formData.name+": "+formData.message+"\" content"
   // git push - fails if the branch already exists - -f works but is dangerous thats why we use a nonce 
