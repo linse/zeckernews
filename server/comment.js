@@ -39,7 +39,7 @@ function composeAndPostPR(formData) {
 
 function composePR(formData, callback) {
   // git branch
-  console.log("cd "+options.local_repo+" && git checkout -b "+formData.nonce
+  exec("cd "+options.local_repo+" && git checkout -b "+formData.nonce
   // change source file - three newlines for patch trickery on PR step later
   +" && echo \"\n\n\n____\n\n**"+formData.name+"** posted a message:\n\n> "+formData.message
   +"\n\n\" >> "+options.local_repo+"/content/"+formData.file+"/comment"+formData.nonce+".md" // TODO optionize
