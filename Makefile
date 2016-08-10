@@ -13,14 +13,16 @@ VPATH = content
 
 all: generate generate-index
 
-# TODO order by time (post first and then comments)
+# find-xargs-ls magic => ordered by time; post first and then comments
 generate:
 	git pull
 	for p in `ls $(indir)`; \
-		do cat $(indir)/$$p/* | pandoc -o $(outdir)/"$$p.html" -B before.html -A afterPost.html --css style.css; \
+    do f=`find './$(indir)/'$$p -type f -print0 | xargs -0 ls -rt1`; \
+		  cat $$f | pandoc -o $(outdir)/"$$p.html" -B before.html -A afterPost.html --css style.css; \
 	done;
 
-# Todo generate link name from post title, generate rewritten link
+
+# generate link name and link for each post in input dir
 # b = base filename, dash separated; y = year dash replaced, m = month dash replaced, d = day dash replaced
 # t = title, w = when (human readable date)
 generate-index:
@@ -47,17 +49,6 @@ post:
 	fi; \
 	vim +6 $$file;
 
-#postdir=$(indir)/$$date-$${title// /-}; \
-#  mkdir $(postdir); \
-#	separator='---'; \
-#	if [[ ! -s "$$file" ]]; then \
-# 	  printf "%s\ntitle: %s\ndate: %s\ntags: []\n%s\n\n" $$separator "$$title" $$date $$separator >> "$$file"; \
-#	fi; \
-#	vim +6 $$file;
-
-#	file=$(indir)/$$(date +%Y-%m-%d)-$${title// /-}.md; \
-#	if [ ! -s "$$file" ]; then \
-#	fi \
 # the right way:
 #$(outdir)/%.html: %.md
 #	pandoc $< -o $@
