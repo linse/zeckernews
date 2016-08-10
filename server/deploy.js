@@ -40,7 +40,7 @@ var server = https.createServer(options, function (req, res) {
             // look at all pr's below this, and rewrite their patches so they match the merged new text
             var otherBranches = execLocalSync('git branch -v | grep -v master');
             if (otherBranches !== '') {
-                rebaseOpenPRs(pullReq);
+                //rebaseOpenPRs(pullReq);
             }
             rebuildZeckernews(puts);
         }
