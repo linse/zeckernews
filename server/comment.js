@@ -39,10 +39,11 @@ function composeAndPostPR(formData) {
 
 function composePR(formData, callback) {
   // git branch
-  exec("cd "+options.local_repo+" && git checkout -b "+formData.nonce
+  console.log("cd "+options.local_repo+" && git checkout -b "+formData.nonce
   // change source file - three newlines for patch trickery on PR step later
   +" && echo \"\n\n\n____\n\n**"+formData.name+"** posted a message:\n\n> "+formData.message
   +"\n\n\" >> "+options.local_repo+"/content/"+formData.file+"/comment"+formData.nonce+".md" // TODO optionize
+  +" && git add "+options.local_repo+"/content/"+formData.file+"/comment"+formData.nonce+".md" // TODO optionize
   // git commit
   +" && git commit -m \""+formData.name+": "+formData.message+"\" content"
   // git push - fails if the branch already exists - -f works but is dangerous thats why we use a nonce 
@@ -98,7 +99,7 @@ function deserializeForm(string) {
   } );
   // decode as last step - so we don't remove pluses from form input
   return { 'nonce': nonce(16),
-            'file': parts[0],
+            'file': parts[0].replace(/.html/g,""),
             'name': decodeURIComponent(parts[1].replace(/\+/g," ")),
          'message': decodeURIComponent(parts[2].replace(/\+/g," ")) };
 }
