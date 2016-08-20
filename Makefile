@@ -11,7 +11,7 @@ outdir = /home/linse/public_html/linse.me/public
 host = linse.me
 VPATH = content
 
-all: generate generate-index
+all: generate generate-index generate-feed
 
 # find-xargs-ls magic => ordered by time; post first and then comments
 generate:
@@ -21,17 +21,23 @@ generate:
 		  cat $$f | pandoc -o $(outdir)/"$$p.html" -B before.html -A afterPost.html --css style.css; \
 	done;
 
-
 # generate link name and link for each post in input dir
 # b = base filename, dash separated; y = year dash replaced, m = month dash replaced, d = day dash replaced
 # t = title, w = when (human readable date)
 generate-index:
-	git pull
 	(echo "# Posts Index"; \
 	for f in `ls $(indir)`; \
 		do b=$${f%.*}; y=$${b/-/\/}; m=$${y/-/\/};  d=$${m/-/\/}; t=$$(basename $$d); w=$$(dirname $$d) \
                    echo "- [$$w $$t](https://"$(host)"/$$d.html)"; \
 	done) | pandoc -f markdown -o $(outdir)/index.html -B before.html -A after.html --css style.css;
+
+generate-feed:
+	(printf "<?xml version="1.0" encoding="utf-8"?>\n<rss version="2.0">"; \
+	for p in `ls $(indir)`; \
+    do f=`find './$(indir)/'$$p -type f -print0 | xargs -0 ls -rt1`; \
+		  b=$${p%.*}; y=$${b/-/\/}; m=$${y/-/\/};  d=$${m/-/\/}; t=$$(basename $$d); w=$$(dirname $$d) \
+		  cat $$f | pandoc --variable=link:"https://"$(host)"/$$d.html" --template templates/feeditem.xml --css style.css; \
+	done; echo "</rss>";) > $(outdir)/feed.xml;
 
 set-style:
 	cp style.css $(outdir)
@@ -48,6 +54,9 @@ post:
  	  printf "%s\ntitle: %s\ndate: %s\ntags: []\n%s\n\n" $$separator "$$title" $$date $$separator >> "$$file"; \
 	fi; \
 	vim +6 $$file;
+
+clean:
+	rm $(outdir)/*;
 
 # the right way:
 #$(outdir)/%.html: %.md
