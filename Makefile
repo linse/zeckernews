@@ -6,7 +6,8 @@ SHELL := /bin/bash
 # html files to be served:
 # ~/public_html/linse.me/public
 
-indir = content
+posts = content/posts
+pages = content/pages
 outdir = /home/linse/public_html/linse.me/public
 host = linse.me
 VPATH = content
@@ -16,9 +17,16 @@ all: generate generate-index generate-feed
 # find-xargs-ls magic => ordered by time; post first and then comments
 generate:
 	git pull
-	for p in `ls $(indir)`; \
-    do f=`find './$(indir)/'$$p -type f -print0 | xargs -0 ls -rt1`; \
+	for p in `ls $(posts)`; \
+    do f=`find './$(posts)/'$$p -type f -print0 | xargs -0 ls -rt1`; \
 		  cat $$f | pandoc -o $(outdir)/"$$p.html" -B before.html -A afterPost.html --css style.css; \
+	done;
+
+# find-xargs-ls magic => ordered by time; post first and then comments
+generate-pages:
+	git pull
+	for p in `ls $(pages)`; do \
+		  cat $(pages)/$$p | pandoc -o $(outdir)/"$${p/%.md/.html}" -B before.html -A after.html --css style.css; \
 	done;
 
 # generate link name and link for each post in input dir
@@ -26,15 +34,15 @@ generate:
 # t = title, w = when (human readable date)
 generate-index:
 	(echo "# Posts Index"; \
-	for f in `ls $(indir)`; \
+	for f in `ls $(posts)`; \
 		do b=$${f%.*}; y=$${b/-/\/}; m=$${y/-/\/};  d=$${m/-/\/}; t=$$(basename $$d); w=$$(dirname $$d) \
                    echo "- [$$w $$t](https://"$(host)"/$$d.html)"; \
 	done) | pandoc -f markdown -o $(outdir)/index.html -B before.html -A after.html --css style.css;
 
 generate-feed:
 	(printf "<?xml version="1.0" encoding="utf-8"?>\n<rss version="2.0">"; \
-	for p in `ls $(indir)`; \
-    do f=`find './$(indir)/'$$p -type f -print0 | xargs -0 ls -rt1`; \
+	for p in `ls $(posts)`; \
+    do f=`find './$(posts)/'$$p -type f -print0 | xargs -0 ls -rt1`; \
 		  b=$${p%.*}; y=$${b/-/\/}; m=$${y/-/\/};  d=$${m/-/\/}; t=$$(basename $$d); w=$$(dirname $$d) \
 		  cat $$f | pandoc --variable=link:"https://"$(host)"/$$d.html" --template templates/feeditem.xml --css style.css; \
 	done; echo "</rss>";) > $(outdir)/feed.xml;
@@ -46,7 +54,7 @@ set-style:
 post:
 	@read -p 'Title? ' title; \
 	date=`date +%Y-%m-%d`; \
-  postdir=$(indir)/$$date-$${title// /-}; \
+  postdir=$(posts)/$$date-$${title// /-}; \
   mkdir -p $$postdir; \
 	file=$$postdir/post.md; \
 	separator='---'; \
