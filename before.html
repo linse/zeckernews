@@ -10,7 +10,7 @@
     <li><a href="https://twitter.com/linse"><span class="twitter"><i class="fa fa-twitter"></i></span></a></li>
     <li><a href="https://github.com/linse"><span class="github"><i class="fa fa-github-alt"></i></span></a></li>
     <li><a href="https://instagram.com/l1ns3"><span class="insta"><i class="fa fa-instagram"></i></span></a></li>
-    <li><a href="/"><span class="rss"><i class="fa fa-rss"></i></span></a></li>
+    <li><a href="/feed.xml"><span class="rss"><i class="fa fa-rss"></i></span></a></li>
   </ul>
 </nav>
 
@@ -102,11 +102,11 @@ function init() {
     col = 0; 
     row = 0;
 
-//  shuffle(colors);
+    //shuffle(colors);
     colors.forEach(function(color) {
       fillPixel(c,color,pixelWidth);
     })
-//    setTimeout(init, 100);
+    //setTimeout(init, 100);
     window.scrollTo(0, 170);
 //    stickNav();
 }

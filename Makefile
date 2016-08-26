@@ -40,7 +40,7 @@ generate-index:
 	done) | pandoc -f markdown -o $(outdir)/index.html -B before.html -A after.html --css style.css;
 
 generate-feed:
-	(printf "<?xml version="1.0" encoding="utf-8"?>\n<rss version="2.0">"; \
+	(printf '<?xml version="1.0" encoding="utf-8"?>\n<rss version="2.0">'; \
 	for p in `ls $(posts)`; \
     do f=`find './$(posts)/'$$p -type f -print0 | xargs -0 ls -rt1`; \
 		  b=$${p%.*}; y=$${b/-/\/}; m=$${y/-/\/};  d=$${m/-/\/}; t=$$(basename $$d); w=$$(dirname $$d) \
