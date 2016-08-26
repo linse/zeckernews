@@ -44,7 +44,7 @@ body {
   font-style: normal;
   font-weight: bold;
   font-size: 18px;
-  color: #888;
+  color: #222222;
 }
 
 #container {
@@ -61,8 +61,8 @@ body {
 
 #post {
   min-height: 15em;
-  width: 45%;
-  padding-left:15%;
+  width: 66%;
+  padding-left:17%;
   padding-bottom: 3em;
 }
 
@@ -71,7 +71,11 @@ body, textarea, input {
   font-size: 16px;
   line-height: 1.5;
   font-weight: 300;
-  color: #888;
+  color: #333333;
+}
+
+body a:visited { 
+    color: SlateBlue;
 }
 
 #name, #message {
