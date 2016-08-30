@@ -6,16 +6,19 @@ SHELL := /bin/bash
 # html files to be served:
 # ~/public_html/linse.me/public
 
+# TODO when comments are off, display a message about that on submit
+# extract out the js header and make it animate
+
 posts = content/posts
 pages = content/pages
 outdir = /home/linse/public_html/linse.me/public
 host = linse.me
 VPATH = content
 
-all: generate generate-index generate-feed
+all: set-style generate-posts generate-pages generate-index generate-feed
 
 # find-xargs-ls magic => ordered by time; post first and then comments
-generate:
+generate-posts:
 	git pull
 	for p in `ls $(posts)`; \
     do f=`find './$(posts)/'$$p -type f -print0 | xargs -0 ls -rt1`; \
