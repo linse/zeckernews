@@ -9,28 +9,50 @@ SHELL := /bin/bash
 # TODO when comments are off, display a message about that on submit
 # extract out the js header and make it animate
 
+#VPATH = content
 posts = content/posts
 pages = content/pages
 outdir = /home/linse/public_html/linse.me/public
 host = linse.me
-VPATH = content
 
-all: set-style generate-posts generate-pages generate-index generate-feed
+PAGES_IN = $(wildcard $(pages)/*.md)
+PAGES_OUT := $(patsubst $(pages)/%.md,$(outdir)/%.html,$(PAGES_IN))
+POST_DIRS_IN = $(wildcard $(posts)/*)
 
+PANDOC_OPTIONS=-f markdown -B before.html --css style.css
+
+all: set-style posts pages generate-index generate-feed
+
+# one-to-one, simple translation of pages
+pages: $(PAGES_OUT)
+
+/home/linse/public_html/linse.me/public/%.html : content/pages/%.md
+	cat $< | pandoc -o $@ $(PANDOC_OPTIONS) -A after.html; \
+
+# conflate comments at bottom of post
 # find-xargs-ls magic => ordered by time; post first and then comments
-generate-posts:
+# no dep analysis but it pulls git so that's ok
+posts:
 	git pull
-	for p in `ls $(posts)`; \
-    do f=`find './$(posts)/'$$p -type f -print0 | xargs -0 ls -rt1`; \
-		  cat $$f | pandoc -o $(outdir)/"$$p.html" -B before.html -A afterPost.html --css style.css; \
+	for p in $(POST_DIRS_IN); \
+    do f=`find $$p -type f -print0 | xargs -0 ls -rt1`; \
+		  cat $$f | pandoc -o $(outdir)/`basename $$p`.html $(PANDOC_OPTIONS) -A afterPost.html; \
 	done;
 
-# find-xargs-ls magic => ordered by time; post first and then comments
-generate-pages:
-	git pull
-	for p in `ls $(pages)`; do \
-		  cat $(pages)/$$p | pandoc -o $(outdir)/"$${p/%.md/.html}" -B before.html -A after.html --css style.css; \
-	done;
+
+# generate link name and link for each post in input dir
+# b = base filename, dash separated; y = year dash replaced, m = month dash replaced, d = day dash replaced
+# t = title, w = when (human readable date)
+index:
+	(echo "# Posts Index"; \
+	for f in $(POST_DIRS_IN); \
+	  do echo `basename $$f`; \
+		b=$${f%.*}; y=$${b/-/\/}; m=$${y/-/\/};  d=$${m/-/\/}; t=$$(basename $$d); w=$$(dirname $$d) \
+                   echo "- [$$w $$t](https://"$(host)"/$$d.html)"; \
+	done) 
+
+#| pandoc -o $(outdir)/index.html $(PANDOC_OPTIONS) -A after.html;
+
 
 # generate link name and link for each post in input dir
 # b = base filename, dash separated; y = year dash replaced, m = month dash replaced, d = day dash replaced
@@ -40,14 +62,14 @@ generate-index:
 	for f in `ls $(posts)`; \
 		do b=$${f%.*}; y=$${b/-/\/}; m=$${y/-/\/};  d=$${m/-/\/}; t=$$(basename $$d); w=$$(dirname $$d) \
                    echo "- [$$w $$t](https://"$(host)"/$$d.html)"; \
-	done) | pandoc -f markdown -o $(outdir)/index.html -B before.html -A after.html --css style.css;
+	done) | pandoc -o $(outdir)/index.html $(PANDOC_OPTIONS) -A after.html;
 
 generate-feed:
 	(printf '<?xml version="1.0" encoding="utf-8"?>\n<rss version="2.0">'; \
 	for p in `ls $(posts)`; \
     do f=`find './$(posts)/'$$p -type f -print0 | xargs -0 ls -rt1`; \
 		  b=$${p%.*}; y=$${b/-/\/}; m=$${y/-/\/};  d=$${m/-/\/}; t=$$(basename $$d); w=$$(dirname $$d) \
-		  cat $$f | pandoc --variable=link:"https://"$(host)"/$$d.html" --template templates/feeditem.xml --css style.css; \
+		  cat $$f | pandoc --variable=link:"https://"$(host)"/$$d.html" --template templates/feeditem.xml; \
 	done; echo "</rss>";) > $(outdir)/feed.xml;
 
 set-style:
