@@ -23,10 +23,22 @@ PANDOC_OPTIONS=-f markdown -B before.html --css style.css
 
 all: set-style posts pages generate-index generate-feed
 
+# generate link name and link for each post in input dir
+# each post dir name consists of date and title, combined with -
+#  - take the basename of each file, replace - by / so the date looks nice
+#  - sed puts a space behind the date to split into date and title
+index:
+	(echo "# Posts Index"; \
+	for f in $(POST_DIRS_IN); do \
+	  base=`basename $$f`; \
+    read -r date title <<< `sed -r 's/^[0-9\/]{11}/& /' <<< $${base//-/\/}`; \
+    echo "- [$${title//\// }](https://$(host)/$${date}$${title//\//-}.html)"; \
+	done) | pandoc -o $(outdir)/index.html $(PANDOC_OPTIONS) -A after.html;
+
 # one-to-one, simple translation of pages
 pages: $(PAGES_OUT)
 
-/home/linse/public_html/linse.me/public/%.html : content/pages/%.md
+$(outdir)/%.html : $(pages)/%.md
 	cat $< | pandoc -o $@ $(PANDOC_OPTIONS) -A after.html; \
 
 # conflate comments at bottom of post
@@ -38,20 +50,6 @@ posts:
     do f=`find $$p -type f -print0 | xargs -0 ls -rt1`; \
 		  cat $$f | pandoc -o $(outdir)/`basename $$p`.html $(PANDOC_OPTIONS) -A afterPost.html; \
 	done;
-
-
-# generate link name and link for each post in input dir
-# b = base filename, dash separated; y = year dash replaced, m = month dash replaced, d = day dash replaced
-# t = title, w = when (human readable date)
-index:
-	(echo "# Posts Index"; \
-	for f in $(POST_DIRS_IN); \
-	  do echo `basename $$f`; \
-		b=$${f%.*}; y=$${b/-/\/}; m=$${y/-/\/};  d=$${m/-/\/}; t=$$(basename $$d); w=$$(dirname $$d) \
-                   echo "- [$$w $$t](https://"$(host)"/$$d.html)"; \
-	done) 
-
-#| pandoc -o $(outdir)/index.html $(PANDOC_OPTIONS) -A after.html;
 
 
 # generate link name and link for each post in input dir
