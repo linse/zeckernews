@@ -32,7 +32,7 @@ index:
 	for f in $(POST_DIRS_IN); do \
 	  base=`basename $$f`; \
     read -r date title <<< `sed -r 's/^[0-9\/]{11}/& /' <<< $${base//-/\/}`; \
-    echo "- [$${title//\// }](https://$(host)/$${date}$${title//\//-}.html)"; \
+    echo "- ##[$${title//\// }](https://$(host)/$${date}$${title//\//-}.html) $${date%$\/}"; \
 	done) | pandoc -o $(outdir)/index.html $(PANDOC_OPTIONS) -A after.html;
 
 # one-to-one, simple translation of pages
