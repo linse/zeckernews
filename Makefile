@@ -51,7 +51,6 @@ posts:
 		  cat $$f | pandoc -o $(outdir)/`basename $$p`.html $(PANDOC_OPTIONS) -A afterPost.html; \
 	done;
 
-
 # generate link name and link for each post in input dir
 # b = base filename, dash separated; y = year dash replaced, m = month dash replaced, d = day dash replaced
 # t = title, w = when (human readable date)
@@ -117,9 +116,11 @@ clean:
 #        }
 #sudo service nginx restart
 
+# renew letsencrypt certificates
+#sudo acmetool want linse.me www.linse.me box.linse.me
+
 ## added css
 ## added template
-
 ## add javascript for sparklepony header
 
 # add js for comment magick
