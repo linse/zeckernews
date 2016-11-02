@@ -1,7 +1,5 @@
 <canvas id="header" width="1000" height="200px" border="2px black">You need a HTML5 browser to see the fancy header.</canvas>
 
-<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-<link href="https://linse.me/feed.xml" rel="alternate" type="application/rss+xml" title="Posts RSS" />
 <nav class="slippy-nav">
   <ul>
     <li><a href="/">home</a></li>
@@ -15,110 +13,6 @@
   </ul>
 </nav>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-<script type="text/javascript">
-
-// global!
-var row = 0;
-var col = 0;
-
-function resizeCanvas(c) {
-    $("#header")
-        .width($(window).width())
-        .height("200px");
-}
-
-function stickNav() {
-    console.log($(".slippy-nav").css('position'));
-}
-
-$('.slippy-nav').addClass('original').clone().insertAfter('.slippy-nav').addClass('cloned').css('position','fixed').css('top','0').css('margin-top','0').css('z-index','500').removeClass('original').hide();
-
-scrollIntervalID = setInterval(stickIt, 10);
-
-
-function stickIt() {
-
-  var orgElementPos = $('.original').offset();
-  orgElementTop = orgElementPos.top;               
-
-  if ($(window).scrollTop() >= (orgElementTop)) {
-    // scrolled past the original position; now only show the cloned, sticky element.
-
-    // Cloned element should always have same left position and width as original element.     
-    orgElement = $('.original');
-    coordsOrgElement = orgElement.offset();
-    leftOrgElement = coordsOrgElement.left;  
-    widthOrgElement = orgElement.css('width');
-    $('.cloned').css('left',leftOrgElement+'px').css('top',0).css('width',widthOrgElement).show();
-    $('.original').css('visibility','hidden');
-  } else {
-    // not scrolled past the slippy-nav; only show the original slippy-nav.
-    $('.cloned').hide();
-    $('.original').css('visibility','visible');
-  }
-}
-
-
-function rainbow(c, color, numPixels) {
-    color = color * 240 / (numPixels - Math.max(c.width,c.height)); // could be 255
-    return 'hsl(' + color + ',100%,75%)';
-}
-
-function numPixels(canvas, pixelWidth) {
-    return Math.ceil((canvas.width * canvas.height) / (pixelWidth * pixelWidth)) 
-          + (Math.max(canvas.width,canvas.height));
-}
-
-function fillPixel(c, color, w) {
-    var ctx = c.getContext("2d")
-    if (row*w > c.height) {
-            col++;
-            row = 0;
-    }
-    ctx.beginPath();
-    ctx.rect(col*w, row*w, w, w);
-    ctx.fillStyle = rainbow(c, color, numPixels(c,w));
-    ctx.fill();
-    row++;
-}
-
-// filling the canvas black as a test
-function fillCanvas(c) {
-    var ctx = c.getContext("2d")
-    ctx.fillRect(0, 0, c.width, c.height);
-}
-
-function init() {
-    var c = document.getElementById("header")
-    resizeCanvas(c);
-    fillCanvas(c);
-
-    var pixelWidth = 20;
-    var colors = [];
-    for (var i = 1; i <= numPixels(c,pixelWidth); i++) {
-      colors.push(i);
-    }
-
-    col = 0; 
-    row = 0;
-
-    //shuffle(colors);
-    colors.forEach(function(color) {
-      fillPixel(c,color,pixelWidth);
-    })
-    //setTimeout(init, 100);
-    window.scrollTo(0, 170);
-//    stickNav();
-}
-
-$(function() {
-  init();
-});
-
-
-window.onresize = init;
-</script>
 <div id="container">
 
 <div id="post">

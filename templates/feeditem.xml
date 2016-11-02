@@ -1,0 +1,18 @@
+<item>
+$if(title)$
+  <title>$title$</title>
+$if(subtitle)$
+  <subtitle>$subtitle$</subtitle>
+$endif$
+$if(link)$
+  <link>$link$</link>
+$endif$
+$for(author)$
+  <author>$author$</author>
+$endfor$
+$if(date)$
+  <date>$date$</date>
+$endif$
+$endif$
+  <description>$body$</description>
+</item>

@@ -19,7 +19,7 @@ PAGES_IN = $(wildcard $(pages)/*.md)
 PAGES_OUT := $(patsubst $(pages)/%.md,$(outdir)/%.html,$(PAGES_IN))
 POST_DIRS_IN = $(wildcard $(posts)/*)
 
-PANDOC_OPTIONS=-f markdown -B before.html --css style.css
+PANDOC_OPTIONS=-f markdown -B before.html -H headers/default.js -H headers/rainbow.js --css style.css
 
 all: set-style posts pages generate-index generate-feed
 
