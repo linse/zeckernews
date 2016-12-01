@@ -1,11 +1,11 @@
 <script type="text/javascript">
   $(window).on('load',init);
 //  $(window).on('resize',init);
-  $(window).on('beforeunload',init);
+//  $(window).on('beforeunload',init); // causes jump on external links
 
   function init() {
-    window.scrollTo(0, 0);
-    window.scrollTo(0, 170);
+    //window.scrollTo(0, 0);
+    //window.scrollTo(0, 170);
     for (var i = 1; i <= 500; i++) {
         (function(index) {
             setTimeout(function() { drawPixels(index); }, i * 100);
@@ -19,7 +19,7 @@
 
     // fillCanvas(c);
   
-    var pixelWidth = 10;
+    var pixelWidth = 13;
     var colors = [];
     for (var i = 1; i <= numPixels(canvas, pixelWidth); i++) {
       colors.push(i);
