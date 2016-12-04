@@ -12,7 +12,7 @@ SHELL := /bin/bash
 #VPATH = content
 posts = content/posts
 pages = content/pages
-outdir = /home/linse/public_html/linse.me/public
+outdir = ./public
 host = linse.me
 
 PAGES_IN = $(wildcard $(pages)/*.md)
