@@ -19,7 +19,7 @@ PAGES_IN = $(wildcard $(pages)/*.md)
 PAGES_OUT := $(patsubst $(pages)/%.md,$(outdir)/%.html,$(PAGES_IN))
 POST_DIRS_IN = $(wildcard $(posts)/*)
 
-PANDOC_OPTIONS=-f markdown -B before.html -H headers/default.js -H headers/rainbow.js -H headers/youtube.js --css style.css
+PANDOC_OPTIONS=-f markdown -B before.html -H headers/default.js -H headers/headers_fractal.js -H headers/youtube.js --css style.css
 
 all: set-style posts pages generate-index generate-feed
 
@@ -71,6 +71,8 @@ generate-feed:
 
 set-style:
 	cp style.css $(outdir)
+	cp headers/worker.js $(outdir)
+	cp headers/slider.gif $(outdir)
 
 # TODO: make slug lowercase
 post:

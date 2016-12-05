@@ -199,6 +199,21 @@ img {
     background: url("//i.imgur.com/TxzC70f.png") no-repeat;
     cursor: pointer;
 }
+
+/* not in effect yet */
+/*
+.slider_bg {
+  width: 152;
+  height: 16;
+  border:1px solid #aaa;
+}
+
+.slider {
+  width: 19;
+  height: 16;
+}
+*/
+
 /* end youtube */
 
 /* for fractal header */
@@ -257,258 +272,231 @@ img {
 </script>
 
 <script type="text/javascript">
-function slider (a_init, a_tpl) {
-  this.setValue  = f_sliderSetValue;
-  this.getPosition    = f_sliderGetPos;
+function slider(presets, settings) {
+  this.setValue = sliderSetValue;
+  this.getPosition = sliderGetPos;
   
-  // register in the global collection	
-  if (!window.A_SLIDERS)
-  	window.A_SLIDERS = [];
-  var n_id = this.n_id = window.A_SLIDERS.length;
-  window.A_SLIDERS[n_id] = this;
+  // register in the global list
+  if (!window.sliders)
+    window.sliders = [];
+  var id = this.id = window.sliders.length;
+  window.sliders[id] = this;
   
   // save config parameters in the slider object
-  var s_key;
-  if (a_tpl) {
-    for (s_key in a_tpl) {
-      this[s_key] = a_tpl[s_key];
+  var key;
+  if (settings) {
+    for (key in settings) {
+      this[key] = settings[key];
     }
   }
-  for (s_key in a_init) {
-    this[s_key] = a_init[s_key];
+  for (key in presets) {
+    this[key] = presets[key];
   }
-  this.n_pix2value = this.n_pathLength / (this.n_maxValue - this.n_minValue);
-  if (this.n_value == null) {
-    this.n_value = this.n_minValue;
+  this.pix2value = this.pathLength / (this.maxValue - this.minValue);
+  if (this.value == null) {
+    this.value = this.minValue;
   }
   
-  // generate the control's HTML
-  document.write(
-  	'<div style="width:' + this.n_controlWidth + 
-                'px;height:' + this.n_controlHeight + 'px;border:0; background-image:url(' + this.s_imgControl + ')" id="sl' + n_id + 'base">' +
-  	        '<img src="' + this.s_imgSlider + '" width="' + this.n_sliderWidth + '" height="' + this.n_sliderHeight + '" border="0" style="position:relative;left:' + this.n_pathLeft + 'px;top:' + this.n_pathTop + 'px;z-index:' + this.n_zIndex + ';cursor:pointer;visibility:hidden;" name="sl' + n_id + 'slider" id="sl' + n_id + 'slider" onmousedown="return f_sliderMouseDown(' + n_id + ')" /></div>'
+  // generate the control's HTML - somehow this does not work when styled via css?
+  document.write('<div style="width:' + this.controlWidth + 'px;height:' + this.controlHeight + 'px;border:1px solid #aaa" id="sl' + id + 'base" class="slider_bg">' +
+  	        '<img src="' + this.imgSlider + '" width="' + this.sliderWidth + '" height="' + this.sliderHeight + '" border="0" style="position:relative;left:' + this.pathLeft + 'px;top:' + this.pathTop + 'px;z-index:' + this.zIndex + ';cursor:pointer;visibility:hidden;" name="sl' + id + 'slider" id="sl' + id + 'slider" onmousedown="return sliderMouseDown(' + id + ')" class="slider"/></div>'
   );
-  this.e_base   = get_element('sl' + n_id + 'base');
-  this.e_slider = get_element('sl' + n_id + 'slider');
+  this.e_base   = get_element('sl' + id + 'base');
+  this.e_slider = get_element('sl' + id + 'slider');
   
   if (document.addEventListener) {
-  	this.e_slider.addEventListener("touchstart", function (e_event) { f_sliderMouseDown(n_id, e_event) },  false);
-  	document.addEventListener("touchmove", f_sliderMouseMove,  false);
-  	document.addEventListener("touchend", f_sliderMouseUp,  false);
+    this.e_slider.addEventListener("touchstart", function (e_event) { sliderMouseDown(id, e_event) },  false);
+    document.addEventListener("touchmove", sliderMouseMove,  false);
+    document.addEventListener("touchend", sliderMouseUp,  false);
   }
-
 
   // safely hook document/window events
-  if (!window.f_savedMouseMove && document.onmousemove != f_sliderMouseMove) {
-  	window.f_savedMouseMove = document.onmousemove;
-  	document.onmousemove = f_sliderMouseMove;
+  if (!window.savedMouseMove && document.onmousemove != sliderMouseMove) {
+    window.savedMouseMove = document.onmousemove;
+    document.onmousemove = sliderMouseMove;
   }
-  if (!window.f_savedMouseUp && document.onmouseup != f_sliderMouseUp) {
-  	window.f_savedMouseUp = document.onmouseup;
-  	document.onmouseup = f_sliderMouseUp;
+  if (!window.savedMouseUp && document.onmouseup != sliderMouseUp) {
+    window.savedMouseUp = document.onmouseup;
+    document.onmouseup = sliderMouseUp;
   }
   
   // preset to the value in the input box if available
-  var e_input = this.s_form == null
-  	? get_element(this.s_name)
-  	: document.forms[this.s_form]
-  		? document.forms[this.s_form].elements[this.s_name]
-  		: null;
+  var e_input = this.form == null
+    ? get_element(this.name)
+    : document.forms[this.form]
+      ? document.forms[this.form].elements[this.name]
+      : null;
   this.setValue(e_input && e_input.value != '' ? e_input.value : null, 1);
   this.e_slider.style.visibility = 'visible';
 }
 
-function f_sliderSetValue (n_value, b_noInputCheck) {
-  if (n_value == null) {
-    n_value = this.n_value == null ? this.n_minValue : this.n_value;
+function sliderSetValue(value, b_noInputCheck) {
+  if (value == null) {
+    value = this.value == null ? this.minValue : this.value;
   }
-  if (isNaN(n_value)) {
+  if (isNaN(value)) {
     return false;
   }
   // round to closest multiple if step is specified
-  if (this.n_step) {
-    n_value = Math.round((n_value - this.n_minValue) / this.n_step) * this.n_step + this.n_minValue;
+  if (this.step) {
+    value = Math.round((value - this.minValue) / this.step) * this.step + this.minValue;
   }
   // smooth out the result
-  if (n_value % 1) {
-    n_value = Math.round(n_value * 1e5) / 1e5;
+  if (value % 1) {
+    value = Math.round(value * 1e5) / 1e5;
   }
   
-  if (n_value < this.n_minValue) {
-    n_value = this.n_minValue;
+  if (value < this.minValue) {
+    value = this.minValue;
   }
-  if (n_value > this.n_maxValue) {
-    n_value = this.n_maxValue;
+  if (value > this.maxValue) {
+    value = this.maxValue;
   }
   
-  this.n_value = n_value;
+  this.value = value;
   
   // move the slider
-  if (this.b_vertical) {
-    this.e_slider.style.top  = (this.n_pathTop + this.n_pathLength - Math.round((n_value - this.n_minValue) * this.n_pix2value)) + 'px';
-  }
-  else {
-    this.e_slider.style.left = (this.n_pathLeft + Math.round((n_value - this.n_minValue) * this.n_pix2value)) + 'px';
-  }
+  this.e_slider.style.left = (this.pathLeft + Math.round((value - this.minValue) * this.pix2value)) + 'px';
   
   // save new value
   var e_input;
-  if (this.s_form == null) {
-    e_input = get_element(this.s_name);
+  if (this.form == null) {
+    e_input = get_element(this.name);
     if (!e_input)
-      return b_noInputCheck ? null : f_sliderError(this.n_id, "Can not find the input with ID='" + this.s_name + "'.");
+      return b_noInputCheck ? null : sliderError(this.id, "Can not find the input with ID='" + this.name + "'.");
   }
   else {
-    var e_form = document.forms[this.s_form];
+    var e_form = document.forms[this.form];
     if (!e_form)
-      return b_noInputCheck ? null : f_sliderError(this.n_id, "Can not find the form with NAME='" + this.s_form + "'.");
-    e_input = e_form.elements[this.s_name];
+      return b_noInputCheck ? null : sliderError(this.id, "Can not find the form with NAME='" + this.form + "'.");
+    e_input = e_form.elements[this.name];
     if (!e_input)
-      return b_noInputCheck ? null : f_sliderError(this.n_id, "Can not find the input with NAME='" + this.s_name + "'.");
+      return b_noInputCheck ? null : sliderError(this.id, "Can not find the input with NAME='" + this.name + "'.");
   }
-  e_input.value = n_value;
+  e_input.value = value;
 }
 
 // get absolute position of the element in the document
-function f_sliderGetPos (b_vertical, b_base) {
-  var n_pos = 0, s_coord = (b_vertical ? 'Top' : 'Left');
+function sliderGetPos(b_base) {
+  var pos = 0, coord = 'Left';
   var o_elem = o_elem2 = b_base ? this.e_base : this.e_slider;
   
   while (o_elem) {
-    n_pos += o_elem["offset" + s_coord];
+    pos += o_elem["offset" + coord];
     o_elem = o_elem.offsetParent;
   }
   o_elem = o_elem2;
   
-  var n_offset;
+  var offset;
   while (o_elem.tagName != "BODY") {
-    n_offset = o_elem["scroll" + s_coord];
-    if (n_offset)
-      n_pos -= o_elem["scroll" + s_coord];
+    offset = o_elem["scroll" + coord];
+    if (offset)
+      pos -= o_elem["scroll" + coord];
     o_elem = o_elem.parentNode;
   }
-  return n_pos;
+  return pos;
 }
 
-function f_sliderMouseDown (n_id, e_event) {
-  window.n_activeSliderId = n_id;
-  f_sliderSaveTouch(e_event);
+function sliderMouseDown(id, e_event) {
+  window.activeSliderId = id;
+  sliderSaveTouch(e_event);
 
-  var o_slider = A_SLIDERS[n_id];
-  window.n_mouseOffset = o_slider.b_vertical
-    ? window.n_mouseY - o_slider.n_sliderHeight / 2 - o_slider.getPosition(1, 1) - parseInt(o_slider.e_slider.style.top)
-    : window.n_mouseX - o_slider.n_sliderWidth  / 2 - o_slider.getPosition(0, 1) - parseInt(o_slider.e_slider.style.left);
+  var o_slider = sliders[id];
+  window.mouseOffset = window.mouseX - o_slider.sliderWidth  / 2 - o_slider.getPosition(1) - parseInt(o_slider.e_slider.style.left);
 
   return false;
 }
 
-function f_sliderMouseUp (e_event, b_watching) {
-  if (window.n_activeSliderId != null) {
-    var o_slider = window.A_SLIDERS[window.n_activeSliderId];
-    o_slider.setValue(o_slider.n_minValue + (o_slider.b_vertical
-    	? (o_slider.n_pathLength - parseInt(o_slider.e_slider.style.top) + o_slider.n_pathTop)
-    	: (parseInt(o_slider.e_slider.style.left) - o_slider.n_pathLeft)) / o_slider.n_pix2value);
-    if (b_watching) {
+function sliderMouseUp(e_event, isWatching) {
+  if (window.activeSliderId != null) {
+    var o_slider = window.sliders[window.activeSliderId];
+    o_slider.setValue(o_slider.minValue + (parseInt(o_slider.e_slider.style.left) - o_slider.pathLeft) / o_slider.pix2value);
+    if (isWatching) {
 	return;
     }
-    window.n_activeSliderId = null;
-    window.n_mouseOffset = null;
+    window.activeSliderId = null;
+    window.mouseOffset = null;
   }
-  if (window.f_savedMouseUp) {
-    return window.f_savedMouseUp(e_event);
+  if (window.savedMouseUp) {
+    return window.savedMouseUp(e_event);
   }
 }
 
-function f_sliderMouseMove (e_event) {
+function sliderMouseMove(e_event) {
   if (!e_event && window.event) e_event = window.event;
   
   // save mouse coordinates
   if (e_event) {
-    window.n_mouseX = e_event.clientX + f_scrollLeft();
-    window.n_mouseY = e_event.clientY + f_scrollTop();
+    window.mouseX = e_event.clientX + scrollLeft();
+    window.mouseY = e_event.clientY + scrollTop();
   }
   
   // check if in drag mode
-  if (window.n_activeSliderId != null) {
-    f_sliderSaveTouch(e_event);
-    var o_slider = window.A_SLIDERS[window.n_activeSliderId];
+  if (window.activeSliderId != null) {
+    sliderSaveTouch(e_event);
+    var o_slider = window.sliders[window.activeSliderId];
     
-    var n_pxOffset;
-    if (o_slider.b_vertical) {
-      var n_sliderTop = window.n_mouseY - o_slider.n_sliderHeight / 2 - o_slider.getPosition(1, 1) - window.n_mouseOffset;
-      // limit the slider movement
-      if (n_sliderTop < o_slider.n_pathTop) {
-        n_sliderTop = o_slider.n_pathTop;
-      }
-      var n_pxMax = o_slider.n_pathTop + o_slider.n_pathLength;
-      if (n_sliderTop > n_pxMax) {
-        n_sliderTop = n_pxMax;
-      }
-      o_slider.e_slider.style.top = n_sliderTop + 'px';
-      n_pxOffset = o_slider.n_pathLength - n_sliderTop + o_slider.n_pathTop;
+    var pxOffset;
+    var sliderLeft = window.mouseX - o_slider.sliderWidth / 2 - o_slider.getPosition(1) - window.mouseOffset;
+    // limit the slider movement
+    if (sliderLeft < o_slider.pathLeft) {
+      sliderLeft = o_slider.pathLeft;
     }
-    else {
-      var n_sliderLeft = window.n_mouseX - o_slider.n_sliderWidth / 2 - o_slider.getPosition(0, 1) - window.n_mouseOffset;
-      // limit the slider movement
-      if (n_sliderLeft < o_slider.n_pathLeft) {
-        n_sliderLeft = o_slider.n_pathLeft;
-      }
-      var n_pxMax = o_slider.n_pathLeft + o_slider.n_pathLength;
-      if (n_sliderLeft > n_pxMax) {
-        n_sliderLeft = n_pxMax;
-      }
-      o_slider.e_slider.style.left = n_sliderLeft + 'px';
-      n_pxOffset = n_sliderLeft - o_slider.n_pathLeft;
+    var pxMax = o_slider.pathLeft + o_slider.pathLength;
+    if (sliderLeft > pxMax) {
+      sliderLeft = pxMax;
     }
-    if (o_slider.b_watch) {
-      f_sliderMouseUp(e_event, 1);
-    }
+    o_slider.e_slider.style.left = sliderLeft + 'px';
+    pxOffset = sliderLeft - o_slider.pathLeft;
+    sliderMouseUp(e_event, 1);
     return false;
   }
 
-  if (window.f_savedMouseMove) {
-    return window.f_savedMouseMove(e_event);
+  if (window.savedMouseMove) {
+    return window.savedMouseMove(e_event);
   }
 }
 
-function f_sliderSaveTouch (e_event) {
+function sliderSaveTouch(e_event) {
   if (!e_event || !e_event.touches) return;
   e_event.save_entDefault();
   var e_touch = e_event.touches[0] || e_event.changedTouches[0];
-  window.n_mouseX = e_touch.pageX;
-  window.n_mouseY = e_touch.pageY;
+  window.mouseX = e_touch.pageX;
+  window.mouseY = e_touch.pageY;
 }
 
 // get the scroller positions of the page
-function f_scrollLeft() {
-  return f_filterResults (
+function scrollLeft() {
+  return filterResults (
     window.pageXOffset ? window.pageXOffset : 0,
     document.documentElement ? document.documentElement.scrollLeft : 0,
     document.body ? document.body.scrollLeft : 0
   );
 }
-function f_scrollTop() {
-  return f_filterResults (
+
+function scrollTop() {
+  return filterResults (
     window.pageYOffset ? window.pageYOffset : 0,
     document.documentElement ? document.documentElement.scrollTop : 0,
     document.body ? document.body.scrollTop : 0
   );
 }
-function f_filterResults(n_win, n_docel, n_body) {
-  var n_result = n_win ? n_win : 0;
-  if (n_docel && (!n_result || (n_result > n_docel)))
-    n_result = n_docel;
-  return n_body && (!n_result || (n_result > n_body)) ? n_body : n_result;
+
+function filterResults(win, docel, body) {
+  var result = win ? win : 0;
+  if (docel && (!result || (result > docel)))
+    result = docel;
+  return body && (!result || (result > body)) ? body : result;
 }
 
-function f_sliderError (n_id, s_message) {
-  alert("Slider #" + n_id + " Error:\n" + s_message);
-  window.n_activeSliderId = null;
+function sliderError(id, message) {
+  alert("Slider #" + id + " Error:\n" + message);
+  window.activeSliderId = null;
 }
 
 get_element = document.all ?
-  function (s_id) { return document.all[s_id] } :
-  function (s_id) { return document.getElementById(s_id) };
+  function (id) { return document.all[id] } :
+  function (id) { return document.getElementById(id) };
 </script>
 
 
@@ -559,16 +547,16 @@ var timeout = 0;
 var gi = 0; // i-th circular surface map?
 var start = 0;
 
-function statsreport (msg) {
+function statsreport(msg) {
 //tdiv=document.getElementById("rendtime");
 //tdiv.innerHTML="Rend.Time: "+msg;
 //xdiv=document.getElementById("divx");
-//xdiv.innerHTML="x1: " + region.startx.toFixed(16) + "&nbsp;&nbsp;&nbsp;&nbsp;  x2: " + (region.startx+region.extx).toFixed(16);
+//xdiv.innerHTML="x1: " + region.startx.toFixed(16) + "  x2: " + (region.startx+region.extx).toFixed(16);
 //ydiv=document.getElementById("divy");
-//ydiv.innerHTML="y1: " + region.starty.toFixed(16) + "&nbsp;&nbsp;&nbsp;&nbsp;  y2: " + (region.starty-region.exty).toFixed(16);
+//ydiv.innerHTML="y1: " + region.starty.toFixed(16) + "  y2: " + (region.starty-region.exty).toFixed(16);
 }
 
-function statsreportpos (xre,yim) {
+function statsreportpos(xre,yim) {
 //  alert("x1: " + region.startx.toFixed(16) 
 //    + "  x2: " + (region.startx+region.extx).toFixed(16) 
 //     + "  x: " + xre.toFixed(16)
@@ -588,41 +576,43 @@ function setJulia(real, imaginary) {
 }
 
 function setColor(r, g, b, rng, p100) {
-    A_SLIDERS[0].setValue(r);
-    A_SLIDERS[1].setValue(g);
-    A_SLIDERS[2].setValue(b);
-    gred = parseInt(document.getElementById("sliderred").value);
-    ggreen = parseInt(document.getElementById("slidergreen").value);
-    gblue = parseInt(document.getElementById("sliderblue").value);
-    palette = 0;
-    document.getElementById("proc").checked = true;
-    document.getElementById("p100").checked = p100;
-    range = rng;
+  sliders[0].setValue(r);
+  sliders[1].setValue(g);
+  sliders[2].setValue(b);
+  gred = parseInt(document.getElementById("sliderred").value);
+  ggreen = parseInt(document.getElementById("slidergreen").value);
+  gblue = parseInt(document.getElementById("sliderblue").value);
+  palette = 0;
+  document.getElementById("proc").checked = true;
+  document.getElementById("p100").checked = p100;
+  range = rng;
 }
 
 function setRegion(sx, sy, ex, ey) {
-    region.startx = sx;
-    region.extx = ex;
-    region.starty = sy;
-    region.exty = ey;
+  region.startx = sx;
+  region.extx = ex;
+  region.starty = sy;
+  region.exty = ey;
 }
 
 function resetRegion(region) {
-    region = region;
+  region = region;
 }
 
-function setIterations (iters, esc) {
-    escapevalue = esc;
-    maxiter = iters;
-    document.getElementById("iteration").value = maxiter;
-    document.getElementById("escape").value = escapevalue;
+function setIterations(iters, esc) {
+  escapevalue = esc;
+  maxiter = iters;
+  document.getElementById("iteration").value = maxiter;
+  document.getElementById("escape").value = escapevalue;
 }
 
-function resetvalues (preset) {
+function resetvalues(preset) {
   if (preset===0) {
     setMandel();
-    setRegion(-2.4, 1.2, 3.2, 2.4);
-    setColor(6, 12, 18, 1, false);
+    // ideally something in between the two
+    //setRegion(-2.4, 1.2, 3.2, 2.4);
+    setRegion(-1.5530336967141098, 1.0940454648625746, 3.081684406066686, 2.196795086888102);
+    setColor(6, 16, 12, 1, false);
     setIterations(150, 4.0);
   }
   else if (preset===1) {
@@ -646,22 +636,16 @@ function resetvalues (preset) {
   else if (preset===4) {
     setMandel();
     setRegion(-1.2584439628969177, 0.3824003228346746, 1.2240005653474384e-7, 9.180012777720847e-8);
-    setColor(0, 4, 0, 1, false);
     setIterations(3000, 4.0);
+    palette = 1;
+    document.getElementById("vga").checked = true;
   }
   else if (preset===5) {
-    setJulia(-0.751111111111111111, 0.048888888888888889);
-    setRegion(-0.902853313737312, 0.32191465632594346, 0.8258131992245716, 0.6193598994184287);
-    setIterations(2000, 4.0);
-    palette = 3;
-    document.getElementById("nice").checked = true;
-  }
-  else if (preset===6) {
     setJulia(-0.777306122448979592, 0.118040816326530612);
     setRegion(-1.5530336967141098, 1.0940454648625746, 3.081684406066686, 2.196795086888102);
     setIterations(1000, 4.0);
-    palette = 2;
-    document.getElementById("bw").checked = true;
+    palette = 3;
+    document.getElementById("sepia").checked = true;
   }
 }
 
@@ -685,7 +669,7 @@ function iter(a, b, x, y, ba, mi) {
 }
 
 
-function drawrows_mt () {
+function drawrowmt () {
   gi = 0;
   for (var i = 0; i < maxthreads; i++) {
     var worker = workers[i];
@@ -832,7 +816,7 @@ function draw() {
   //alert(surfacewidth + " / " + region.extx + " :: " + surfaceheight + " / " + region.exty);
   lp1 = region.extx / surfacewidth;
   lp2 = region.exty / surfaceheight;
-  if (mthread.checked) drawrows_mt(); else drawrows();
+  if (mthread.checked) drawrowmt(); else drawrows();
 }
 
 
@@ -1123,7 +1107,6 @@ function load(w, h) {
   h = window.innerWidth * 3/4;
   initialize("header", w, h);
   resetvalues(4);
-  palette = 1;
   draw();
 }
 
@@ -1166,52 +1149,49 @@ function paramschange() {
   <input id="proc" name="radiobutton" type="radio" value="0" checked="checked">
   Procedural<br>
   Red: &nbsp;&nbsp;
-  <input name="sliderred" id="sliderred" type="Text" size="2" maxlength="3" onChange="A_SLIDERS[0].setValue(this.value)">
+  <input name="sliderred" id="sliderred" type="Text" size="3" maxlength="3" onChange="sliders[0].setValue(this.value)">
   <script  type="text/javascript" language="JavaScript">
   var presets = {
-  'b_vertical' : false,
-  'b_watch': true,
-  'n_controlWidth': 152,
-  'n_controlHeight': 16,
-  'n_sliderWidth': 19,
-  'n_sliderHeight': 16,
-  'n_pathLeft' : 0,
-  'n_pathTop' : 0,
-  'n_pathLength' : 132,
-  's_imgControl': 'img/slider_bg.gif',
-  's_imgSlider': 'img/slider.gif',
-  'n_zIndex': 1
+  'controlWidth': 152,
+  'controlHeight': 16,
+  'sliderWidth': 19,
+  'sliderHeight': 16,
+  'pathLeft' : 0,
+  'pathTop' : 0,
+  'pathLength' : 132,
+  'imgSlider': 'img/slider.gif',
+  'zIndex': 1
   }
   var redInitVals = {
-  's_name': 'sliderred',
-  'n_minValue' : 0,
-  'n_maxValue' : 255,
-  'n_value' : 8,
-  'n_step' : 1
+  'name': 'sliderred',
+  'minValue' : 0,
+  'maxValue' : 255,
+  'value' : 8,
+  'step' : 1
   }
   var greenInitVals = {
-  's_name': 'slidergreen',
-  'n_minValue' : 0,
-  'n_maxValue' : 255,
-  'n_value' : 16,
-  'n_step' : 1
+  'name': 'slidergreen',
+  'minValue' : 0,
+  'maxValue' : 255,
+  'value' : 16,
+  'step' : 1
   }
   var blueInitVals = {
-  's_name': 'sliderblue',
-  'n_minValue' : 0,
-  'n_maxValue' : 255,
-  'n_value' : 24,
-  'n_step' : 1
+  'name': 'sliderblue',
+  'minValue' : 0,
+  'maxValue' : 255,
+  'value' : 24,
+  'step' : 1
   }
   new slider(redInitVals, presets);
   </script>
 
-  Green: <input name="slidergreen" id="slidergreen" type="Text" size="2" maxlength="3" onChange="A_SLIDERS[1].setValue(this.value)">
+  Green: <input name="slidergreen" id="slidergreen" type="Text" size="3" maxlength="3" onChange="sliders[1].setValue(this.value)">
   <script  type="text/javascript" language="JavaScript">
   new slider(greenInitVals, presets);
   </script>
   Blue: &nbsp;&nbsp;
-  <input name="sliderblue" id="sliderblue" type="Text" size="2" maxlength="3" onChange="A_SLIDERS[2].setValue(this.value)">
+  <input name="sliderblue" id="sliderblue" type="Text" size="3" maxlength="3" onChange="sliders[2].setValue(this.value)">
   <script  type="text/javascript" language="JavaScript">
   new slider(blueInitVals, presets);
   </script>
@@ -1220,7 +1200,7 @@ function paramschange() {
   <p></p>
   <input id="vga" name="radiobutton" type="radio" value="1"> VGA
   <input id="bw" name="radiobutton" type="radio" value="2"> B&amp;W
-  <input id="nice" name="radiobutton" type="radio" value="3"> Sepia
+  <input id="sepia" name="radiobutton" type="radio" value="3"> Sepia
   </fieldset>
   <p style="margin:5px">
   <input type="button" name="ok" value="Redraw!" onClick="paramschange();">
@@ -1228,13 +1208,12 @@ function paramschange() {
   <ul class="presets">
   <li>Presets
   <ul>
-  <li><a href="javascript:resetvalues(0); draw();">Start</a></li>
-  <li><a href="javascript:resetvalues(2); draw();">Mandel1</a></li>
-  <li><a href="javascript:resetvalues(1); draw();">Mandel2</a></li>
-  <li><a href="javascript:resetvalues(3); draw();">Mandel3</a></li>
-  <li><a href="javascript:resetvalues(4); draw();">Mandel4</a></li>
-  <li><a href="javascript:resetvalues(5); draw();">Julia1</a></li>
-  <li><a href="javascript:resetvalues(6); draw();">Julia2</a></li>
+  <li><a href="javascript:resetvalues(0); draw();">Mandel Procedural</a></li>
+  <li><a href="javascript:resetvalues(2); draw();">Mandel Grey Spiral</a></li>
+  <li><a href="javascript:resetvalues(1); draw();">Mandel Lightning</a></li>
+  <li><a href="javascript:resetvalues(3); draw();">Mandel Tiles</a></li>
+  <li><a href="javascript:resetvalues(4); draw();">Mandel Oilspill</a></li>
+  <li><a href="javascript:resetvalues(5); draw();">Julia Sepia</a></li>
   </ul>
   </li>
   <li><a href="javascript:pngconvert('canvas');">PNG Output</a></li>
