@@ -1,8 +1,9 @@
 <script type="text/javascript">
   $(window).on('load',init);
+  $(window).on('resize',init);
 
   function init() {
-    for (var i = 1; i <= 2; i++) {
+    for (var i = 1; i <= 6; i++) {
         (function(index) {
             setTimeout(function() { drawPixels(index); }, i * 100);
         })(i);

@@ -3,7 +3,7 @@ title: O hai!
 date: 
 tags: 
 ---
-<img src="https://www.instagram.com/p/7lO7devf-Q/media/?size=l" alt="portrait of me">
+<img src="http://i.imgur.com/cpGiAMO.jpg" alt="portrait of me">
 
 I am linse and I love to make things. Feel free to leave a reply regarding any of my projects. To talk to me via jabber, just add linse@randale.org.
 
