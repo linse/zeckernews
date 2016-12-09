@@ -1,203 +1,14 @@
 <!-- INSERT FROM HERE needs assets: pics for slider and also the worker.js -->
 <style>
-html, body {
-  width:  100%;
-  height: 100%;
-  margin: 0px;
-  padding: 0px;
-}
-
-/* rainbow-light */
 body {
-    background: -webkit-linear-gradient(left, #FF6666, #FFCC66, #FFFF66, #66FF66, #33CCFF, #6699FF, #CC66FF ); /* For Safari 5.1 to 6.0 */
-    background: -o-linear-gradient(left, #FF6666, #FFCC66, #FFFF66, #66FF66, #33CCFF, #6699FF, #CC66FF ); /* For Opera 11.1 to 12.0 */
-    background: -moz-linear-gradient(left, #FF6666, #FFCC66, #FFFF66, #66FF66, #33CCFF, #6699FF, #CC66FF ); /* For Fx 3.6 to 15 */
-    background: linear-gradient(to right, #FF6666, #FFCC66, #FFFF66, #66FF66, #33CCFF, #6699FF, #CC66FF ); /* Standard syntax (must be last) */
-}
-
-#rainbow-dark {
-    background: -webkit-linear-gradient(left, red, orange, yellow, green, blue, indigo, violet); /* For Safari 5.1 to 6.0 */
-    background: -o-linear-gradient(left, red, orange, yellow, green, blue, indigo, violet); /* For Opera 11.1 to 12.0 */
-    background: -moz-linear-gradient(left, red, orange, yellow, green, blue, indigo, violet); /* For Fx 3.6 to 15 */
-    background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet); /* Standard syntax (must be last) */
-}
-
-.slippy-nav {
-  z-index: 100;
-  width: 100%;
-  font-size: 14px;
-  background: rgba(255,255,150,.90);
-  color: red;
-}
-
-.slippy-nav ul {
-  margin: 0 auto;
-  padding: 0 auto;
-  line-height: 41px;
-  width: 80%;
-}
-
-.slippy-nav ul li{
-  display: inline;
-  padding: 0px 3.3%;
-} 
-
-.slippy-nav ul li a{
-  text-decoration: none;
-  font-style: normal;
-  font-weight: bold;
-  font-size: 18px;
-  color: #222222;
-}
-
-#container {
-  background: white;
-  width: 100%;
-  margin: 0px auto 3em auto;
-}
-
-#sidebar{
-  float: right;
-  width: 20%;
-  padding-right: 15%;
-}
-
-#post {
-  min-height: 15em;
-  width: 66%;
-  padding-left:17%;
-  padding-bottom: 3em;
-}
-
-body, textarea, input {
-  font-family: "Open Sans", Helvetica, Arial, sans-serif;
-  font-size: 16px;
-  line-height: 1.5;
-  font-weight: 300;
-  color: #333333;
-}
-
-body a:visited { 
-    color: SlateBlue;
-}
-
-#name, #message {
-  border: none;
-}
-
-h1 {
-  margin: 0px;
-  padding-top: 4em;
-  padding-bottom: .5em;
-  background: #FFFF99;
-}
-
-h3 {
-  margin: 0px;
-  padding-top: 0;
-  padding-bottom: 2em;
-}
-
-textarea {
-  width:  100%;
-  height: 4em;
-  margin: 1em auto;
-}
-
-/* for box. fancyindex */
-table, table a {
-  color : hotpink;
-}
-
-table {
-  background-color: lightgray;
-  margin: 20px 0px;
-  width: 80%;
-}
-/* end */
-
-.figure {
-  overflow: hidden;
-  height: 240px;
-}
-
-img {
-  width: 100%;
-}
-
-#triangle-up {
-  width: 0;
-  height: 0;
-  border-left: 30px solid transparent;
-  border-right: 30px solid transparent;
-  border-bottom: 20px solid #FFCCFF;
-  border-bottom: 20px solid white;
-  display:inline-block;
-}
-
-#triangle-down {
-  width: 0;
-  height: 0;
-  border-left: 30px solid transparent;
-  border-right: 30px solid transparent;
-  border-top: 20px solid #FFFF99;
-  display:inline-block;
-}
-
-/*for youtube thumbnail fast loader */
-.youtube-player {
-    position: relative;
-    padding-bottom: 56.23%;
-    /* Use 75% for 4:3 videos */
-    height: 0;
-    overflow: hidden;
-    max-width: 100%;
-    background: #000;
-    margin: 5px;
-}
-
-.youtube-player iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 100;
-    background: transparent;
-}
-
-.youtube-player img {
-    bottom: 0;
-    display: block;
-    left: 0;
-    margin: auto;
-    max-width: 100%;
-    width: 100%;
-    position: absolute;
-    right: 0;
-    top: 0;
-    border: none;
-    height: auto;
-    cursor: pointer;
-    -webkit-transition: .4s all;
-    -moz-transition: .4s all;
-    transition: .4s all;
-}
-
-.youtube-player img:hover {
-    -webkit-filter: brightness(75%);
-}
-
-.youtube-player .play {
-    height: 72px;
-    width: 72px;
-    left: 50%;
-    top: 50%;
-    margin-left: -36px;
-    margin-top: -36px;
-    position: absolute;
-    background: url("//i.imgur.com/TxzC70f.png") no-repeat;
-    cursor: pointer;
+/* not worth it
+    background-image:url(/fractal.jpg);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: top center; 
+    margin: -15px;
+    padding: -15px;
+    width: 100%;*/
 }
 
 /* not in effect yet */
@@ -214,15 +25,9 @@ img {
 }
 */
 
-/* end youtube */
-
 /* for fractal header */
 #params {
-  /*font-family: "Open Sans", Helvetica, Arial, sans-serif;*/
   font-size: 14px; 
-  /*border: solid 2px; */
-  /*border-color: #000000;*/ 
-  /*background-color:rgba(255,255,255,0.5);*/
   background: rgba(255,255,150,.90);
   padding: 8px; 
   position: absolute; 
@@ -234,42 +39,6 @@ img {
   width: unset;
 }
 </style>
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-<script type="text/javascript">
-  $(window).on('load',initNav);
-
-  function initNav() {
-    // this is broken, jquery is loaded though.
-    $('.slippy-nav').addClass('original').clone().insertAfter('.slippy-nav')
-                    .addClass('cloned').css('position','fixed').css('top','0').css('margin-top','0').css('z-index','500')
-                    .removeClass('original').hide();
-    var scrollIntervalID = setInterval(stickNav.bind(null, $('.original'), $('.cloned')), 10);
-  }
-
-  function stickNav(original, cloned) {
-    var scrollPosition = $(window).scrollTop();
-    var originalPosition = original.offset().top;
-    if (scrollPosition >= originalPosition) {
-      onlyShowCloned(original, cloned);
-    } else {
-      onlyShowOriginal(original, cloned);
-    }
-  }
-
-  function onlyShowCloned(original, cloned) {
-    // cloned should have same geometry as original
-    var left = original.offset().left;
-    var width = original.css('width');
-    cloned.css('left',left+'px').css('top',0).css('width',width).show();
-    original.css('visibility','hidden');
-  }
-
-  function onlyShowOriginal(original, cloned) {
-    cloned.hide();
-    original.css('visibility','visible');
-  }
-</script>
 
 <script type="text/javascript">
 function slider(presets, settings) {
@@ -298,8 +67,12 @@ function slider(presets, settings) {
   }
   
   // generate the control's HTML - somehow this does not work when styled via css?
-  document.write('<div style="width:' + this.controlWidth + 'px;height:' + this.controlHeight + 'px;border:1px solid #aaa" id="sl' + id + 'base" class="slider_bg">' +
-  	        '<img src="' + this.imgSlider + '" width="' + this.sliderWidth + '" height="' + this.sliderHeight + '" border="0" style="position:relative;left:' + this.pathLeft + 'px;top:' + this.pathTop + 'px;z-index:' + this.zIndex + ';cursor:pointer;visibility:hidden;" name="sl' + id + 'slider" id="sl' + id + 'slider" onmousedown="return sliderMouseDown(' + id + ')" class="slider"/></div>'
+  document.write('<div style="width:' + this.controlWidth + 'px;height:' + this.controlHeight 
+            + 'px;border:1px solid #aaa" id="sl' + id + 'base" class="slider_bg">'
+  	        + '<img src="' + this.imgSlider + '" width="' + this.sliderWidth + '" height="' + this.sliderHeight 
+            + '" border="0" style="position:relative;left:' + this.pathLeft + 'px;top:' + this.pathTop 
+            + 'px;z-index:' + this.zIndex + ';cursor:pointer;visibility:hidden;"'
+            +' name="sl' + id + 'slider" id="sl' + id + 'slider" onmousedown="return sliderMouseDown(' + id + ')" class="slider"/></div>'
   );
   this.e_base   = get_element('sl' + id + 'base');
   this.e_slider = get_element('sl' + id + 'slider');
@@ -768,9 +541,9 @@ function drawrows() {
   for (var j = 0; j < surfacewidth; j++) {
     a = a + lp1;
     if (!fractal.julia)
-      n = iter(a, b, re, im, escapevalue, maxiter);
+      n = iter(a, b, fractal.re, fractal.im, escapevalue, maxiter);
     else
-      n = iter(re, im, a, b, escapevalue, maxiter);
+      n = iter(fractal.re, fractal.im, a, b, escapevalue, maxiter);
 
     if (n >= maxiter) { // end of iterations: paint it black
       pixels[offset++] = 0; // r
@@ -964,6 +737,29 @@ function wheelhandle(delta) {
 //  else draw();
 }
 
+function zoomin() {
+  var visszx = -1;
+  var visszy = -1;
+  zoom(visszx, visszy);
+}
+
+function zoomout() {
+  var visszx = oszt(surfacewidth, (surfacewidth - 8));
+  var visszy = oszt(surfaceheight, (surfaceheight - (8 * surfaceheight / surfacewidth)));
+  zoom(visszx, visszy);
+}
+
+function zoom(visszx, visszy) {
+  region.extx += 8 * lp1 * visszx;
+  region.exty += (8 * surfaceheight / surfacewidth) * lp2 *  visszy;
+  region.startx -= 4 * lp1 * visszx;
+  region.starty += (4 * surfaceheight / surfacewidth) * lp2 * visszy;
+  if (mthread.checked) {
+    clearTimeout(timeout);
+    timeout = setTimeout("draw()",250);
+  }
+  else draw();
+}
 //touch - same as mouse?
 
 function ontouchstart(e) {
@@ -1091,7 +887,7 @@ function booltoint(b) {
   return b ? 1 : 0;
 }
 
-function pngconvert (canvasElement) {
+function pngconvert(canvasElement) {
   var canvas = document.getElementById(canvasElement);
   var url = canvas.toDataURL("image/png");
   var newwin = window.open();
@@ -1133,7 +929,9 @@ function paramschange() {
 <body onload="load(800,600)" style="margin:0px">
   <div id="params">
   <p style="margin:2px; margin-bottom: 8px">
-    Click to explore, or scroll down.
+    Click and drag to explore.<br>
+    <a href="javascript:zoomin();">Zoom +</a> &#47;
+    <a href="javascript:zoomout();">zoom -</a>
   </p>
   <p style="margin:2px; clear:both;">
     Max.Iteration: <input name="iteration" id="iteration" type="text" size="5" maxlength="5" value="150" style="float: right;">
@@ -1216,7 +1014,7 @@ function paramschange() {
   <li><a href="javascript:resetvalues(5); draw();">Julia Sepia</a></li>
   </ul>
   </li>
-  <li><a href="javascript:pngconvert('canvas');">PNG Output</a></li>
+  <li><a href="javascript:pngconvert('header');">PNG Output</a></li>
   </ul>
 
   </div>

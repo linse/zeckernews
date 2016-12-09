@@ -79,6 +79,7 @@ set-style:
 	cp style.css $(outdir)
 	cp headers/worker.js $(outdir)
 	cp headers/slider.gif $(outdir)
+	cp headers/fractal.jpg $(outdir)
 
 # TODO: make slug lowercase
 post:

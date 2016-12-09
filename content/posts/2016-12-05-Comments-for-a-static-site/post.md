@@ -20,17 +20,20 @@ First we create the local change and push it:
 
 ```` javascript
 function composePR(formData, callback) {
+  var commentfile = options.local_repo + "/content/" 
+                  + formData.file + "/comment" + formData.nonce + ".md";
+  var pushurl = "https://" + options.token 
+              + "@github.com/linse/zeckernews.git " + formData.nonce 
   // git branch
   exec("cd " + options.local_repo + " && git checkout -b " + formData.nonce
-  // change source file
-  + " && echo \"\n\n\n____\n\n**" + formData.name + "** posted a message:\n\n> " + formData.message
-  + "\n\n\" >> " + options.local_repo + "/content/" + formData.file + "/comment" + formData.nonce+".md"
-  + " && git add " + options.local_repo + "/content/" + formData.file + "/comment" + formData.nonce+".md"
-  // git commit
-  + " && git commit -m \"" + formData.name + ": " + formData.message + "\" content"
-  // git push - fails if the branch already exists - thats why we use a nonce/a hash
-  + " && git push https://" + options.token + "@github.com/linse/zeckernews.git " + formData.nonce
-  + " ; git checkout master", callback);
+    // change source file
+    + " && echo \"\n\n\n____\n\n**" + formData.name + "** posted a message:\n\n> " 
+    + formData.message + "\n\n\" >> " + commentfile
+    + " && git add " + commentfile
+    // git commit
+    + " && git commit -m \"" + formData.name + ": " + formData.message + "\" content"
+    // git push fails if branch exists - thats why we add a nonce / hash
+    + " && git push " + pushurl + " ; git checkout master", callback);
 }
 ````
 
