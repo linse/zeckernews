@@ -18,7 +18,7 @@ The comment server accepts the requests from the comment form, and creates githu
 We can use github's API for this.
 First we create the local change and push it:
 
-````
+```` javascript
 function composePR(formData, callback) {
   // git branch
   exec("cd " + options.local_repo + " && git checkout -b " + formData.nonce
@@ -36,7 +36,7 @@ function composePR(formData, callback) {
 
 Then we format it as an open pull request for github's API:
 
-````
+```` javascript
 function postPR(formData) {
   var data = '{'title': 'Comment PR from ' + formData.name,
                'body': 'from the form',
@@ -50,7 +50,8 @@ function postPR(formData) {
 
 In the last line we see how we send it via POST to github. 
 This function looks like a standard HTTPS request to github's API server:
-````
+
+```` javascript
 function sendGithubRequest(method, path, content) {
   var post_req = https.request({
     method: method,
@@ -70,6 +71,7 @@ function sendGithubRequest(method, path, content) {
   post_req.end();
 }
 ````
+
 Then I wrapped the whole thing in a tiny https server and run it as a daemon. Let's try this out.
 <PIC OF THE FORM AND THE QUEUE>
 So this is the first step. We made a comment and got an open pull request on github.
@@ -84,7 +86,7 @@ Or I approve it and merge the code change that it introduces.
 Both actions trigger my deploy server, via github's webhook interface. 
 This is the second server I have running. The deploy server is even more concise than the comment server.
 
-````
+```` javascript
 var server = https.createServer(options, function (req, res) {
   var body = "";
   req.on('data', function (chunk) {
@@ -108,6 +110,7 @@ var server = https.createServer(options, function (req, res) {
 // Listen on given port, IP defaults to 127.0.0.1
 server.listen(options.port);
 ````
+
 You can see in the code that the case distinction is a bit convoluted.
 We know that /something/ happened to a pull request if the webhook is triggered.
 We would like to know whether the action was closing the PR - and then we still need to know whether it was closed by merge or just closed and abandoned.

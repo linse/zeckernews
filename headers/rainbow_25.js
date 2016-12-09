@@ -13,7 +13,7 @@
     var canvas = $('#header').get(0)
     resizeCanvas(canvas);
 
-    var pixelWidth = 50;
+    var pixelWidth = 25;
     var colors = [];
     for (var i = 1; i <= numPixels(canvas, pixelWidth); i++) {
       colors.push(i);
@@ -22,7 +22,7 @@
     col = 0; 
     row = 0;
   
-    //shuffle(colors);
+    shuffle(colors);
     colors.forEach(function(color) {
       fillPixel(canvas, color, pixelWidth);
     })

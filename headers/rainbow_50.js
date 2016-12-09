@@ -22,7 +22,7 @@
     col = 0; 
     row = 0;
   
-    //shuffle(colors);
+    shuffle(colors);
     colors.forEach(function(color) {
       fillPixel(canvas, color, pixelWidth);
     })

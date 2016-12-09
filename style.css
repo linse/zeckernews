@@ -183,7 +183,7 @@ img {
 }
 
 .youtube-player img:hover {
-    -webkit-filter: brightness(75%);
+    /*-webkit-filter: brightness(75%);*/
 }
 
 .youtube-player .play {

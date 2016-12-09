@@ -19,9 +19,9 @@ PAGES_IN = $(wildcard $(pages)/*.md)
 PAGES_OUT := $(patsubst $(pages)/%.md,$(outdir)/%.html,$(PAGES_IN))
 POST_DIRS_IN = $(wildcard $(posts)/*)
 
-PANDOC_OPTIONS=-f markdown -B before.html -H headers/default.js -H headers/headers_fractal.js -H headers/youtube.js --css style.css
+PANDOC_OPTIONS=-f markdown -B before.html --css style.css -H headers/default.js
 
-all: set-style posts pages generate-index generate-feed
+all: index posts pages generate-feed set-style
 
 # generate link name and link for each post in input dir
 # each post dir name consists of date and title, combined with -
@@ -33,13 +33,19 @@ index:
 	  base=`basename $$f`; \
     read -r date title <<< `sed -r 's/^[0-9\/]{11}/& /' <<< $${base//-/\/}`; \
     echo "- ##[$${title//\// }](https://$(host)/$${date}$${title//\//-}.html) $${date%$\/}"; \
-	done) | pandoc -o $(outdir)/index.html $(PANDOC_OPTIONS) -A after.html;
+	done) | pandoc -o $(outdir)/index.html $(PANDOC_OPTIONS) -H headers/rainbow_50.js -A after.html;
 
 # one-to-one, simple translation of pages
 pages: $(PAGES_OUT)
 
+$(outdir)/talks.html : $(pages)/talks.md
+	cat $< | pandoc -o $@ $(PANDOC_OPTIONS) -H headers/rainbow_25.js -H headers/youtube.js -A after.html; \
+
+$(outdir)/research.html : $(pages)/research.md
+	cat $< | pandoc -o $@ $(PANDOC_OPTIONS) -H headers/fractal.js -A after.html; \
+
 $(outdir)/%.html : $(pages)/%.md
-	cat $< | pandoc -o $@ $(PANDOC_OPTIONS) -A after.html; \
+	cat $< | pandoc -o $@ $(PANDOC_OPTIONS) -H headers/rainbow_50.js -A after.html; \
 
 # conflate comments at bottom of post
 # find-xargs-ls magic => ordered by time; post first and then comments
@@ -48,7 +54,7 @@ posts:
 	git pull
 	for p in $(POST_DIRS_IN); \
     do f=`find $$p -type f -print0 | xargs -0 ls -rt1`; \
-		  cat $$f | pandoc -o $(outdir)/`basename $$p`.html $(PANDOC_OPTIONS) -A afterPost.html; \
+		  cat $$f | pandoc -o $(outdir)/`basename $$p`.html $(PANDOC_OPTIONS) -H headers/rainbow_50.js -A afterPost.html; \
 	done;
 
 # generate link name and link for each post in input dir
@@ -59,7 +65,7 @@ generate-index:
 	for f in `ls $(posts)`; \
 		do b=$${f%.*}; y=$${b/-/\/}; m=$${y/-/\/};  d=$${m/-/\/}; t=$$(basename $$d); w=$$(dirname $$d) \
                    echo "- [$$w $$t](https://"$(host)"/$$d.html)"; \
-	done) | pandoc -o $(outdir)/index.html $(PANDOC_OPTIONS) -A after.html;
+	done) | pandoc -o $(outdir)/index.html $(PANDOC_OPTIONS) -H headers/rainbow_50.js -A after.html;
 
 generate-feed:
 	(printf '<?xml version="1.0" encoding="utf-8"?>\n<rss version="2.0">'; \
@@ -88,7 +94,7 @@ post:
 	vim +6 $$file;
 
 clean:
-	rm $(outdir)/*;
+	rm $(outdir)/*.*;
 
 # the right way:
 #$(outdir)/%.html: %.md
