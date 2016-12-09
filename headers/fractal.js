@@ -1,30 +1,4 @@
-<!-- INSERT FROM HERE needs assets: pics for slider and also the worker.js -->
 <style>
-body {
-/* not worth it
-    background-image:url(/fractal.jpg);
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-position: top center; 
-    margin: -15px;
-    padding: -15px;
-    width: 100%;*/
-}
-
-/* not in effect yet */
-/*
-.slider_bg {
-  width: 152;
-  height: 16;
-  border:1px solid #aaa;
-}
-
-.slider {
-  width: 19;
-  height: 16;
-}
-*/
-
 /* for fractal header */
 #params {
   font-size: 14px; 
