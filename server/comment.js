@@ -45,11 +45,9 @@ function puts(error, stdout, stderr) { console.log(stdout) }
 
 function composePR(formData, callback) {
   // git branch
-  exec("cd "+options.local_repo+" && git checkout -b "+formData.nonce +
-  // change source file - three newlines for patch trickery on PR step later
-  " && echo \"\n\n\n____\n\n**"+formData.name+"** posted a message:\n\n> "+formData.message +
-  "\n\n\" >> "+options.local_repo+"/content/"+formData.file+"/comment"+formData.nonce+".md" +
-  " && git add "+options.local_repo+"/content/"+formData.file+"/comment"+formData.nonce+".md", puts);
+  var filename = options.local_repo+"/content/"+formData.file+"/comment"+formData.nonce+".md"
+  console.log(filename);
+  exec("cd "+options.local_repo+" && git checkout -b "+formData.nonce + " && echo \"\n\n\n____\n\n**"+formData.name+"** posted a message:\n\n> "+formData.message + "\n\n\" >> " + filename + " && git add " + filename, callback);
 //  // git commit
 //  +" && git commit -m \""+formData.name+": "+formData.message+"\" content"
 //  // git push - fails if the branch already exists - -f works but is dangerous thats why we use a nonce 
