@@ -44,15 +44,17 @@ function execLocal(cmd, callback) {
 function puts(error, stdout, stderr) { console.log(stdout) }
 
 function composePR(formData, callback) {
-  // git branch
-  var filename = options.local_repo+"/content/"+formData.file+"/comment"+formData.nonce+".md"
-  console.log(filename);
-  exec("cd "+options.local_repo+" && git checkout -b "+formData.nonce + " && echo \"\n\n\n____\n\n**"+formData.name+"** posted a message:\n\n> "+formData.message + "\n\n\" >> " + filename + " && git add " + filename, callback);
-//  // git commit
-//  +" && git commit -m \""+formData.name+": "+formData.message+"\" content"
-//  // git push - fails if the branch already exists - -f works but is dangerous thats why we use a nonce 
-//  +" && git push https://"+options.token+"@github.com/linse/zeckernews.git "+formData.nonce
-//  +" ; git checkout master", callback);
+  var filename = options.local_repo+"/content/posts/"+formData.file+"/comment"+formData.nonce+".md"
+        // git branch
+  exec("cd " + options.local_repo + " && git checkout -b " + formData.nonce
+       // write comment to file
+     + " && echo \"\n\n\n____\n\n**" + formData.name + "** posted a message:\n\n> "+formData.message
+     + "\n\n\" >> " + filename + " && git add " + filename
+       // git commit
+     + " && git commit -m \""+formData.name+": "+formData.message+"\" content"
+       // git push - fails if the branch already exists - -f works but is dangerous thats why we use a nonce
+    + " && git push https://"+options.token+"@github.com/linse/zeckernews.git "+formData.nonce
+    + " ; git checkout master", callback);
 }
 
 function postPR(formData) {
