@@ -45,11 +45,11 @@ function puts(error, stdout, stderr) { console.log(stdout) }
 
 function composePR(formData, callback) {
   // git branch
-  execLocal("git checkout -b "+formData.nonce, //puts);
+  exec("cd "+options.local_repo+" && git checkout -b "+formData.nonce +
   // change source file - three newlines for patch trickery on PR step later
-  execLocal(" && echo \"\n\n\n____\n\n**"+formData.name+"** posted a message:\n\n> "+formData.message), puts);
+  " && echo \"\n\n\n____\n\n**"+formData.name+"** posted a message:\n\n> "+formData.message +
 //  +"\n\n\" >> "+options.local_repo+"/content/"+formData.file+"/comment"+formData.nonce+".md" // TODO optionize
-//  +" && git add "+options.local_repo+"/content/"+formData.file+"/comment"+formData.nonce+".md" // TODO optionize
+  " && git add "+options.local_repo+"/content/"+formData.file+"/comment"+formData.nonce+".md", puts); // TODO optionize
 //  // git commit
 //  +" && git commit -m \""+formData.name+": "+formData.message+"\" content"
 //  // git push - fails if the branch already exists - -f works but is dangerous thats why we use a nonce 
