@@ -21,19 +21,19 @@ POST_DIRS_IN = $(wildcard $(posts)/*)
 
 PANDOC_OPTIONS=-f markdown -B before.html --css style.css -H headers/default.js
 
-all: index posts pages generate-feed set-style
+all: posts posts-index generate-index pages generate-feed set-style
 
 # generate link name and link for each post in input dir
 # each post dir name consists of date and title, combined with -
 #  - take the basename of each file, replace - by / so the date looks nice
 #  - sed puts a space behind the date to split into date and title
-index:
+posts-index:
 	(echo "# Posts Index"; \
 	for f in $(POST_DIRS_IN); do \
 	  base=`basename $$f`; \
     read -r date title <<< `sed -r 's/^[0-9\/]{11}/& /' <<< $${base//-/\/}`; \
     echo "- ##[$${title//\// }](https://$(host)/$${date}$${title//\//-}.html) $${date%$\/}"; \
-	done) | pandoc -o $(outdir)/index.html $(PANDOC_OPTIONS) -H headers/rainbow_50.js -A after.html;
+	done) | pandoc -o $(outdir)/posts_index.html $(PANDOC_OPTIONS) -H headers/rainbow_50.js -A after.html;
 
 # one-to-one, simple translation of pages
 pages: $(PAGES_OUT)
@@ -60,12 +60,22 @@ posts:
 # generate link name and link for each post in input dir
 # b = base filename, dash separated; y = year dash replaced, m = month dash replaced, d = day dash replaced
 # t = title, w = when (human readable date)
+#generate-index:
+#	(echo "# Posts Index"; \
+#	for f in `ls $(posts)`; \
+#		do b=$${f%.*}; y=$${b/-/\/}; m=$${y/-/\/};  d=$${m/-/\/}; t=$$(basename $$d); w=$$(dirname $$d) \
+#                   echo "- [$$w $$t](https://"$(host)"/$$d.html)"; \
+#	done) | pandoc -o $(outdir)/index.html $(PANDOC_OPTIONS) -H headers/rainbow_50.js -A after.html;
+
+# first five posts, ordered in reverse
 generate-index:
-	(echo "# Posts Index"; \
-	for f in `ls $(posts)`; \
-		do b=$${f%.*}; y=$${b/-/\/}; m=$${y/-/\/};  d=$${m/-/\/}; t=$$(basename $$d); w=$$(dirname $$d) \
-                   echo "- [$$w $$t](https://"$(host)"/$$d.html)"; \
-	done) | pandoc -o $(outdir)/index.html $(PANDOC_OPTIONS) -H headers/rainbow_50.js -A after.html;
+	(for p in `ls -r1 $(posts) | head -n 5`; \
+    do f=`find './$(posts)/'$$p -type f -print0 | xargs -0 ls -rt1`; \
+		  b=$${p%.*}; y=$${b/-/\/}; m=$${y/-/\/};  d=$${m/-/\/}; t=$$(basename $$d); w=$$(dirname $$d) \
+		  cat $$f | pandoc -t markdown --variable=link:"https://"$(host)"/$$d.html" --template templates/postitem.xml; \
+	done; echo "</br></br><h3><a href='./posts_index.html'> &rarr; List of all posts</a></h3>";) | pandoc -o $(outdir)/index.html $(PANDOC_OPTIONS) -H headers/rainbow_50.js -A after.html;
+
+#	done; echo "</rss>";) > $(outdir)/index.html;
 
 generate-feed:
 	(printf '<?xml version="1.0" encoding="utf-8"?>\n<rss version="2.0">'; \
@@ -95,7 +105,6 @@ post:
 
 clean:
 	rm $(outdir)/*.*;
-
 # the right way:
 #$(outdir)/%.html: %.md
 #	pandoc $< -o $@

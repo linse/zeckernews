@@ -65,6 +65,15 @@ body {
   width: 66%;
   padding-left:17%;
   padding-bottom: 3em;
+  font-family: Georgia,Cambria,"Times New Roman",Times,serif;
+    --x-height-multiplier: 0.35;
+    --baseline-multiplier: 0.179;
+    letter-spacing: .01rem;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 21px;
+    line-height: 1.58;
+    letter-spacing: -.003em;
 }
 
 body, textarea, input {
@@ -75,8 +84,13 @@ body, textarea, input {
   color: #333333;
 }
 
+body a {
+  text-decoration: none;
+}
+
 body a:visited { 
-    color: SlateBlue;
+  color: SlateBlue;
+  text-decoration: none;
 }
 
 #name, #message {
@@ -88,6 +102,17 @@ h1 {
   padding-top: 4em;
   padding-bottom: .5em;
   background: #FFFF99;
+  /*font-family: "Open Sans", Helvetica, Arial, sans-serif;*/
+    font-family: "Lucida Grande","Lucida Sans Unicode","Lucida Sans",Geneva,Arial,sans-serif;
+    --x-height-multiplier: 0.363;
+    --baseline-multiplier: 0.157;
+    letter-spacing: -.02em;
+    font-weight: 700;
+    font-style: normal;
+    font-size: 40px;
+    margin-left: -2.5px;
+    line-height: 1.04;
+    letter-spacing: -.028em;
 }
 
 h3 {
@@ -210,4 +235,34 @@ img {
   position: absolute;
   top: 10px;
   right: 10px
+}
+
+.img-circle {
+  padding: .5em;
+  width: 2.5em;
+  border-radius: 50%;
+  float: left;
+}
+
+.author {
+    --x-height-multiplier: 0.363;
+    --baseline-multiplier: 0.157;
+    font-family: "Lucida Grande","Lucida Sans Unicode","Lucida Sans",Geneva,Arial,sans-serif;
+    letter-spacing: -.02em;
+    font-style: normal;
+    margin-left: -2.5px;
+    line-height: 1.04;
+    letter-spacing: -.028em;
+
+  padding: .6em;
+}
+
+.date {
+  color: darkgray;
+  font-size: 15px;
+  padding: .5em;
+}
+
+.sourceCode {
+  font-size: 16px;
 }

@@ -2,6 +2,7 @@
 title: Make as a static site generator
 date: 2016-09-13
 tags: []
+author: Stefanie Schirmer
 ---
 When I applied at Etsy, I was at the backbone conference in Calafou, a tech collective in rural Spain. The bandwith in the countryside was limited, and I had to hand in an assignment which analyzed a lot of data that had to be downloaded from the web. So I decided that my solution should never download the same data twice. This lead me to solving the assignment with a Makefile.
 
