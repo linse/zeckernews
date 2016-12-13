@@ -45,9 +45,9 @@ function puts(error, stdout, stderr) { console.log(stdout) }
 
 function composePR(formData, callback) {
   // git branch
-  execLocal("git checkout -b "+formData.nonce, puts);
+  execLocal("git checkout -b "+formData.nonce, //puts);
   // change source file - three newlines for patch trickery on PR step later
-//  execLocal(" && echo \"\n\n\n____\n\n**"+formData.name+"** posted a message:\n\n> "+formData.message,
+  execLocal(" && echo \"\n\n\n____\n\n**"+formData.name+"** posted a message:\n\n> "+formData.message), puts);
 //  +"\n\n\" >> "+options.local_repo+"/content/"+formData.file+"/comment"+formData.nonce+".md" // TODO optionize
 //  +" && git add "+options.local_repo+"/content/"+formData.file+"/comment"+formData.nonce+".md" // TODO optionize
 //  // git commit
