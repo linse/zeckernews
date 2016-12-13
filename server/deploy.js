@@ -57,7 +57,7 @@ function pull() {
 }
 
 function rebuildZeckernews(callback) {
-  execLocal("make generate", callback);
+  execLocal("make posts", callback);
 }
 
 // remove the branch we just closed or merged
