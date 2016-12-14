@@ -2,6 +2,7 @@
 title: Comments for a static site<br> - github is my moderation queue
 date: 2016-12-05
 tags: []
+author: Stefanie Schirmer
 ---
 In the last post I described how I generate my website. 
 Since the setup is not dynamic on the server, can we still let readers interact with it and have comments and a discussion?
