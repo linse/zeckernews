@@ -2,6 +2,7 @@
 title: Exploring fractals
 date: 2016-12-09
 tags: []
+author: Stefanie Schirmer
 ---
 I really like JavaScript, and also the self-repeating patterns of nature. Leopard spots, sunflower seeds, surface tiles. Fractals are interesting self-similar structures that can often be viewed in 2d and look very organic. Can we explore them in Javascript?
 Let's talk about what a fractal is. It is a mathematical object that is similar-but-different to itself in the previous level of detail. Patterns that you see on one level of detail may also repeat on the next lower level of detail and so on and so on. Potentially, there are infinitely many levels of detail.
