@@ -115,6 +115,20 @@ h1 {
     letter-spacing: -.028em;
 }
 
+h2 {
+    font-family: "Lucida Grande","Lucida Sans Unicode","Lucida Sans",Geneva,Arial,sans-serif;
+    --x-height-multiplier: 0.363;
+    --baseline-multiplier: 0.157;
+    letter-spacing: -.02em;
+    font-weight: 700;
+    font-style: normal;
+    font-size: 30px;
+    margin-left: -2.5px;
+    line-height: 1.04;
+    letter-spacing: -.028em;
+
+}
+
 h3 {
   margin: 0px;
   padding-top: 0;

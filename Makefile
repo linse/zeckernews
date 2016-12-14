@@ -54,7 +54,7 @@ posts:
 	git pull
 	for p in $(POST_DIRS_IN); \
     do f=`find $$p -type f -print0 | xargs -0 ls -rt1`; \
-		  cat $$f | pandoc -o $(outdir)/`basename $$p`.html $(PANDOC_OPTIONS) -H headers/rainbow_50.js -A afterPost.html; \
+		  cat $$f | pandoc -o $(outdir)/`basename $$p`.html $(PANDOC_OPTIONS) -H headers/rainbow_50.js -A afterPost.html --template templates/default.html; \
 	done;
 
 # generate link name and link for each post in input dir

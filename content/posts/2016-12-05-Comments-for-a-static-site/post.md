@@ -2,6 +2,7 @@
 title: Comments for a static site<br> - github is my moderation queue
 date: 2016-12-05
 tags: []
+teaser:
 ---
 In the last post I described how I generate my website. 
 Since the setup is not dynamic on the server, can we still let readers interact with it and have comments and a discussion?
@@ -75,13 +76,14 @@ function sendGithubRequest(method, path, content) {
 }
 ````
 
-Then I wrapped the whole thing in a tiny https server and run it as a daemon. Let's try this out.
-<PIC OF THE FORM AND THE QUEUE>
+Then I wrapped the whole thing in a tiny https server and run it as a daemon. Let's try this out and use the comment form at the bottom of a post.
+![Filling in the comment form](http://i.imgur.com/uuPsU4h.png)
 So this is the first step. We made a comment and got an open pull request on github.
 What can we do with this?
+![Open pull request](http://i.imgur.com/YxipNXz.png)
 
 The next step is comment moderation. I have to take action on the pull request queue.
-I either close a pull request:
+I either close a pull request. 
 <PIC OF ME CLOSING IT>
 Or I approve it and merge the code change that it introduces.
 <PIC OF ME MERGING IT>
