@@ -77,6 +77,13 @@ function slider(presets, settings) {
   this.e_slider.style.visibility = 'visible';
 }
 
+// otherwise it wants to download the slider image on long tap
+window.oncontextmenu = function(event) {
+   event.preventDefault();
+   event.stopPropagation();
+   return false;
+};
+
 function sliderSetValue(value, b_noInputCheck) {
   if (value == null) {
     value = this.value == null ? this.minValue : this.value;
@@ -203,6 +210,34 @@ function sliderMouseMove(e_event) {
     return window.savedMouseMove(e_event);
   }
 }
+
+
+function fixTouch (touch) {
+  var winPageX = window.pageXOffset,
+      winPageY = window.pageYOffset,
+      x = touch.clientX,
+      y = touch.clientY;
+
+  if (touch.pageY === 0 && Math.floor(y) > Math.floor(touch.pageY) ||
+      touch.pageX === 0 && Math.floor(x) > Math.floor(touch.pageX)) {
+      // iOS4 clientX/clientY have the value that should have been
+      // in pageX/pageY. While pageX/page/ have the value 0
+      x = x - winPageX;
+      y = y - winPageY;
+  } else if (y < (touch.pageY - winPageY) || x < (touch.pageX - winPageX) ) {
+      // Some Android browsers have totally bogus values for clientX/Y
+      // when scrolling/zooming a page. Detectable since clientX/clientY
+      // should never be smaller than pageX/pageY minus page scroll
+      x = touch.pageX - winPageX;
+      y = touch.pageY - winPageY;
+  }
+
+  return {
+      clientX:    x,
+      clientY:    y
+  };
+}
+
 
 function sliderSaveTouch(e_event) {
   if (!e_event || !e_event.touches) return;
@@ -361,24 +396,32 @@ function resetvalues(preset) {
     setRegion(-1.5530336967141098, 1.0940454648625746, 3.081684406066686, 2.196795086888102);
     setColor(6, 16, 12, 1, false);
     setIterations(150, 4.0);
+    document.getElementById("proc").checked = true;
+    document.getElementById("p100").checked = false;
   }
   else if (preset===1) {
     setRegion(-0.9901653, 0.30967819, 0.000049076112, 0.00003680);
     setMandel();
     setColor(73, 86, 100, 0.01, true);
     setIterations(1000, 4.0);
+    document.getElementById("proc").checked = true;
+    document.getElementById("p100").checked = false;
   }
   else if (preset===2) {
     setMandel();
     setRegion(-0.7473453988298784, 0.08786729413261629, 0.00003635204133733971, 0.00002727413261628675);
     setColor(5, 5, 5, 1, false);
     setIterations(500, 4.0);
+    document.getElementById("proc").checked = true;
+    document.getElementById("p100").checked = false;
   }
   else if (preset===3) {
     setMandel();
     setRegion(-0.7505856822290244, 0.09319188280359733, 0.0073114653345977, 0.005481528937150232);
     setColor(25, 25, 25, 0.01, true);
     setIterations(1000, 4.0);
+    document.getElementById("proc").checked = true;
+    document.getElementById("p100").checked = false;
   }
   else if (preset===4) {
     setMandel();
@@ -386,6 +429,7 @@ function resetvalues(preset) {
     setIterations(3000, 4.0);
     palette = 1;
     document.getElementById("vga").checked = true;
+    document.getElementById("p100").checked = false;
   }
   else if (preset===5) {
     setJulia(-0.777306122448979592, 0.118040816326530612);
@@ -393,6 +437,7 @@ function resetvalues(preset) {
     setIterations(1000, 4.0);
     palette = 3;
     document.getElementById("sepia").checked = true;
+    document.getElementById("p100").checked = false;
   }
 }
 
@@ -834,6 +879,8 @@ function initialize(canvasElement, w, h) {
   surfacewidth = w;
   surfaceheight = h;
   canvas = document.getElementById(canvasElement);
+  // prevent selection under canvas on click on canvas
+  canvas.onselectstart = function () { return false; }
 
   if (canvas.addEventListener)
     canvas.addEventListener('DOMMouseScroll', wheel, false);
@@ -880,12 +927,21 @@ function load(w, h) {
   draw();
 }
 
-// On resize of browser window, resize the canvas and redraw
+// On resize of browser window, only act if width changes
 window.onresize = function() {
-  w = window.innerWidth;
-  h = window.innerWidth * 3/4;
-  initialize("header", w, h);
-  draw();
+  var cachedWidth = $(window).width();
+  $(window).resize(function(){
+      var newWidth = $(window).width();
+      if(newWidth !== cachedWidth){
+          // here we resize the canvas and redraw
+          w = window.innerWidth;
+          h = window.innerWidth * 3/4;
+          initialize("header", w, h);
+          draw();
+          // here we update the cached val
+          cachedWidth = newWidth;
+      }
+  });
 }
 
 function paramschange() {
@@ -902,11 +958,6 @@ function paramschange() {
 
 <body onload="load(800,600)" style="margin:0px">
   <div id="params">
-  <p style="margin:2px; margin-bottom: 8px">
-    Click and drag to explore.<br>
-    <a href="javascript:zoomin();">Zoom +</a> &#47;
-    <a href="javascript:zoomout();">zoom -</a>
-  </p>
   <p style="margin:2px; clear:both;">
     Max.Iteration: <input name="iteration" id="iteration" type="text" size="5" maxlength="5" value="150" style="float: right;">
   </p>
@@ -976,6 +1027,8 @@ function paramschange() {
   </fieldset>
   <p style="margin:5px">
   <input type="button" name="ok" value="Redraw!" onClick="paramschange();">
+    <a href="javascript:zoomin();">Zoom +</a> &#47;
+    <a href="javascript:zoomout();">zoom -</a>
   </p>
   <ul class="presets">
   <li>Presets
@@ -990,7 +1043,6 @@ function paramschange() {
   </li>
   <li><a href="javascript:pngconvert('header');">PNG Output</a></li>
   </ul>
-
   </div>
 
 <!-- TO HERE -->

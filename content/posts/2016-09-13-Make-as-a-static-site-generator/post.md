@@ -2,9 +2,10 @@
 title: Make as a static site generator
 date: 2016-09-13
 tags: []
-author: Stefanie Schirmer
+teaser: No bandwidth, but a Makefile. <img src="http://i.imgur.com/stTqczq.jpg" alt="Calafou">
 ---
 When I applied at Etsy, I was at the backbone conference in Calafou, a tech collective in rural Spain. The bandwith in the countryside was limited, and I had to hand in an assignment which analyzed a lot of data that had to be downloaded from the web. So I decided that my solution should never download the same data twice. This lead me to solving the assignment with a Makefile.
+<img src="http://i.imgur.com/stTqczq.jpg" alt="Calafou">
 
 I program in many languages and each one has different ways to build projects. Since it is hard to remember the build specifics, I put them in a Makefile. Even when I wrote my thesis in LaTeX, I had a Makefile. 
 

@@ -2,7 +2,7 @@
 title: Comments for a static site<br> - github is my moderation queue
 date: 2016-12-05
 tags: []
-teaser:
+teaser: How to make comments into pull requests that modify the site's source to append the comment to it, and rebuild it on merge. ![Open pull request](http://i.imgur.com/YxipNXz.png)
 ---
 In the last post I described how I generate my website. 
 Since the setup is not dynamic on the server, can we still let readers interact with it and have comments and a discussion?

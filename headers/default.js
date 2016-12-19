@@ -1,3 +1,4 @@
+<meta name=viewport content='width=800'>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 <link href="https://linse.me/feed.xml" rel="alternate" type="application/rss+xml" title="Posts RSS" />

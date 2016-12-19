@@ -73,7 +73,7 @@ generate-index:
     do f=`find './$(posts)/'$$p -type f -print0 | xargs -0 ls -rt1`; \
 		  b=$${p%.*}; y=$${b/-/\/}; m=$${y/-/\/};  d=$${m/-/\/}; t=$$(basename $$d); w=$$(dirname $$d) \
 		  cat $$f | pandoc -t markdown --variable=link:"https://"$(host)"/$$d.html" --template templates/postitem.xml; \
-	done; echo "</br></br><h3><a href='./posts_index.html'> &rarr; List of all posts</a></h3>";) | pandoc -o $(outdir)/index.html $(PANDOC_OPTIONS) -H headers/rainbow_50.js -A after.html;
+	done; echo "</br></br><h3><a href='./posts_index.html'> ▶️ List of all posts</a></h3>";) | pandoc -o $(outdir)/index.html $(PANDOC_OPTIONS) -H headers/rainbow_50.js -A after.html;
 
 #	done; echo "</rss>";) > $(outdir)/index.html;
 
