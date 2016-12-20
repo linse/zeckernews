@@ -41,6 +41,9 @@ pages: $(PAGES_OUT)
 $(outdir)/talks.html : $(pages)/talks.md
 	cat $< | pandoc -o $@ $(PANDOC_OPTIONS) -H headers/rainbow_25.js -H headers/youtube.js -A after.html; \
 
+$(outdir)/about.html : $(pages)/research.md
+	cat $< | pandoc -o $@ $(PANDOC_OPTIONS) -H headers/vonkoch.js -A after.html; \
+
 $(outdir)/research.html : $(pages)/research.md
 	cat $< | pandoc -o $@ $(PANDOC_OPTIONS) -H headers/fractal.js -A after.html; \
 

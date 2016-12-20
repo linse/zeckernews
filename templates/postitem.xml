@@ -1,0 +1,48 @@
+$for(include-before)$
+$include-before$
+$endfor$
+<div id="postitem">
+$if(title)$
+<div id="$idprefix$header">
+$if(link)$
+  <a href=$link$>
+$endif$
+<h1 class="title">$title$</h1>
+$if(link)$
+  </a>
+$endif$
+$if(subtitle)$
+<h1 class="subtitle">$subtitle$</h1>
+$endif$
+$for(author)$
+<img src="http://i.imgur.com/FHN06oj.jpg" alt="avatar" class="img-circle">
+<a href="./posts_index.html">
+<div class="author">$author$<br>
+</a>
+$if(date)$
+<div class="date">$date$</div>
+$endif$
+</div>
+$endfor$
+</div>
+$endif$
+$if(toc)$
+<div id="$idprefix$TOC">
+$toc$
+</div>
+$endif$
+$if(teaser)$
+$teaser$
+$endif$
+<br>
+$if(link)$
+<a href=$link$>
+ <div id="readmore">read more..</div>
+</a>
+$endif$
+<br>
+</div>
+
+$for(include-after)$
+$include-after$
+$endfor$

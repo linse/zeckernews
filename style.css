@@ -23,21 +23,25 @@ body {
 .slippy-nav {
   z-index: 100;
   width: 100%;
-  font-size: 14px;
+  font-size: 16px;
   background: rgba(255,255,150,.90);
   color: red;
 }
 
 .slippy-nav ul {
-  margin: 0 auto;
-  padding: 0 auto;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0px;
+  padding-left: 1.5em;
   line-height: 41px;
-  width: 80%;
+  width: 48em;
 }
 
 .slippy-nav ul li{
   display: inline;
-  padding: 0px 3.3%;
+  padding: 0px 1.75em;
 } 
 
 .slippy-nav ul li a{
@@ -65,7 +69,6 @@ body {
   margin-left: auto;
   margin-right: auto;
   width: 35em;
-  min-width: 700px;
   padding-bottom: 3em;
   font-family: Georgia,Cambria,"Times New Roman",Times,serif;
   --x-height-multiplier: 0.35;
