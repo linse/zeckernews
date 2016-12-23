@@ -107,7 +107,7 @@ body a:visited {
   text-decoration: none;
 }
 
-body h1 a { color: black; }
+h1 a { color: black; }
 
 #name, #message {
   border: none;
