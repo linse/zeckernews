@@ -55,7 +55,7 @@ body {
 #container {
   background: white;
   width: 100%;
-  margin: 0px auto 3em auto;
+  margin: 0px auto 0px auto;
 }
 
 #sidebar{
@@ -81,6 +81,14 @@ body {
   letter-spacing: -.003em;
 }
 
+#footer {
+  text-align: center;
+  font-size: 16px;
+  line-height: 41px;
+  font-style: normal;
+  font-weight: bold;
+}
+
 body, textarea, input {
   font-family: "Open Sans", Helvetica, Arial, sans-serif;
   font-size: 16px;
@@ -98,6 +106,8 @@ body a:visited {
   color: SlateBlue;
   text-decoration: none;
 }
+
+body h1 a { color: black; }
 
 #name, #message {
   border: none;

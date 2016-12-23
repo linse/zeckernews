@@ -3,9 +3,7 @@
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 <link href="https://linse.me/feed.xml" rel="alternate" type="application/rss+xml" title="Posts RSS" />
 <script type="text/javascript">
-  $(window).on('load',init);
-//  $(window).on('resize',init);
-//  $(window).on('beforeunload',init);
+  $(document).ready(init);
 
   function init() {
     $('.slippy-nav').addClass('original').clone().insertAfter('.slippy-nav')

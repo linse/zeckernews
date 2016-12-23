@@ -1,36 +1,63 @@
 <script type="text/javascript">
-  $(window).on('load',init);
-  $(window).on('resize',init);
+  var canvas;
+  var pixelWidth = 50;
+  var colors = [];
 
-  function init() {
-    for (var i = 1; i <= 6; i++) {
-        (function(index) {
-            setTimeout(function() { drawPixels(index); }, i * 100);
-        })(i);
-    }
+  $(document).ready(load);
+
+  // On resize of browser window, only act if width changes
+  window.onresize = function() {
+    var cachedWidth = $(window).width();
+    $(window).resize(function(){
+        var newWidth = $(window).width();
+        if(newWidth !== cachedWidth){
+            // here we resize the canvas and redraw
+            load();
+            // here we update the cached val
+            cachedWidth = newWidth;
+        }
+    });
   }
 
-  function drawPixels(i) {
-    var canvas = $('#header').get(0)
-    resizeCanvas(canvas);
+  function load() {
+    w = window.innerWidth;
+    initialize("header");
+    for (var i = 1; i <= 6; i++) {
+        (function(index) {
+            setTimeout(function() { draw(index); }, i * 100);
+        })(i);
+    }
 
-    var pixelWidth = 50;
-    var colors = [];
+  }
+  
+  function initialize(canvasElement) {
+    // resize
+    canvas = document.getElementById(canvasElement);
+    canvas.width = $(window).width()
+    // make colors
     for (var i = 1; i <= numPixels(canvas, pixelWidth); i++) {
       colors.push(i);
     }
-  
-    col = 0; 
-    row = 0;
-  
-    shuffle(colors);
-    colors.forEach(function(color) {
-      fillPixel(canvas, color, pixelWidth);
-    })
   }
 
-  function resizeCanvas(canvas) {
-    canvas.width = $(window).width()
+  function draw() {
+    row = 0, col = 0, i = 0;
+    // col by col
+    shuffle(colors);
+    for (col=0; col<=numCols(canvas, pixelWidth); col++) {
+      for (row=0; row<=numRows(canvas, pixelWidth); row++) {
+        fillPixel(colors[i++], pixelWidth);
+      }
+    }
+  }
+
+  function fillPixel(color, w) {
+    var ctx = canvas.getContext("2d")
+    ctx.beginPath();
+    ctx.rect(col*w, row*w, w, w);
+    ctx.fillStyle = rainbow(canvas, color, numPixels(canvas,w));
+    ctx.fill();
+    row;
   }
 
   function rainbow(c, color, numPixels) {
@@ -43,17 +70,12 @@
           + (Math.max(canvas.width, canvas.height));
   }
 
-  function fillPixel(c, color, w) {
-    var ctx = c.getContext("2d")
-    if (row*w > c.height) {
-      col++;
-      row = 0;
-    }
-    ctx.beginPath();
-    ctx.rect(col*w, row*w, w, w);
-    ctx.fillStyle = rainbow(c, color, numPixels(c,w));
-    ctx.fill();
-    row++;
+  function numCols(canvas, pixelWidth) {
+    return Math.ceil(canvas.width / pixelWidth);
+  }
+
+  function numRows(canvas, pixelWidth) {
+    return Math.ceil(canvas.height / pixelWidth);
   }
 
   function shuffle(a) {

@@ -2,12 +2,25 @@
     var mainCanvas;
     var circles;
     var mainContext;
-    var mainSpeed = 2;
+    var mainSpeed = .5;
 
-    window.onload = init;
-    window.onresize = init;
+    $(document).ready(load);
 
-    function init() {
+    // On resize of browser window, only act if width changes
+    window.onresize = function() {
+      var cachedWidth = $(window).width();
+      $(window).resize(function(){
+          var newWidth = $(window).width();
+          if(newWidth !== cachedWidth){
+              // here we resize the canvas and redraw
+              load();
+              // here we update the cached val
+              cachedWidth = newWidth;
+          }
+      });
+    }
+
+    function load() {
       mainCanvas = document.getElementById("header");
       mainCanvas.width = window.innerWidth;
       mainContext = mainCanvas.getContext('2d');
