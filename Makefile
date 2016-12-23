@@ -29,7 +29,7 @@ all: posts posts-index generate-index pages generate-feed set-style
 #  - sed puts a space behind the date to split into date and title
 posts-index:
 	(echo "# Posts Index"; \
-	for f in $(POST_DIRS_IN); do \
+	for f in `ls -r1 $(posts)`; do \
 	  base=`basename $$f`; \
     read -r date title <<< `sed -r 's/^[0-9\/]{11}/& /' <<< $${base//-/\/}`; \
     echo "- ##[$${title//\// }](https://$(host)/$${date}$${title//\//-}.html) $${date%$\/}"; \

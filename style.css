@@ -143,6 +143,7 @@ h1 {
     margin-left: -2.5px;
     line-height: 1.04;
     letter-spacing: -.028em;
+  width: 100%;
 }
 
 h2 {
@@ -196,6 +197,8 @@ table {
 
 img {
   width: 100%;
+    margin-left: -2.5px;
+ 
 }
 
 #triangle-up {
