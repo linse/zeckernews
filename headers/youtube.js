@@ -7,7 +7,6 @@
                 if (v[n].dataset.id !== undefined) {
                     div = $('<div>', { "data-id": v[n].dataset.id } );
                     thumb = $(thumbnail(v[n].dataset.id));
-                    console.log(thumb.children('img'));
                     div.append(thumb);
                     div.on('click', iframe);
                     v[n].appendChild(div[0]);
