@@ -53,6 +53,7 @@
 
   function fillPixel(color, w) {
     var ctx = canvas.getContext("2d")
+    ctx.globalAlpha = Math.random();
     ctx.beginPath();
     ctx.rect(col*w, row*w, w, w);
     ctx.fillStyle = rainbow(canvas, color, numPixels(canvas,w));

@@ -1,3 +1,6 @@
+<title>
+"Last five blog posts"
+</title>
 <script type="text/javascript">
   var canvas;
   var pixelWidth = 50;
@@ -53,6 +56,7 @@
 
   function fillPixel(color, w) {
     var ctx = canvas.getContext("2d")
+    ctx.globalAlpha = Math.random();
     ctx.beginPath();
     ctx.rect(col*w, row*w, w, w);
     ctx.fillStyle = rainbow(canvas, color, numPixels(canvas,w));
