@@ -7,7 +7,7 @@
 
   function init() {
     $('.slippy-nav').addClass('original').clone().insertAfter('.slippy-nav')
-                    .addClass('cloned').css('position','fixed').css('top','0').css('margin-top','0').css('z-index','500')
+                    .addClass('cloned').css('position','fixed').css('top','0').css('margin-top','0').css('z-index','800')
                     .removeClass('original').hide();
     var scrollIntervalID = setInterval(stickNav.bind(null, $('.original'), $('.cloned')), 10);
   }

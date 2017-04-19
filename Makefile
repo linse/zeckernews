@@ -85,7 +85,7 @@ set-style:
 post:
 	@read -p 'Title? ' title; \
 	date=`date +%Y-%m-%d`; \
-  postdir=$(posts)/$$date-$${title// /-}; \
+  postdir=$(posts)/.$$date-$${title// /-}; \
   mkdir -p $$postdir; \
 	file=$$postdir/post.md; \
 	separator='---'; \
@@ -95,7 +95,8 @@ post:
 	vim +6 $$file;
 
 clean:
-	rm $(outdir)/*.*;
+	rm $(outdir)/*.html;
+	rm $(outdir)/*.js;
 # the right way:
 #$(outdir)/%.html: %.md
 #	pandoc $< -o $@
@@ -125,7 +126,11 @@ clean:
 #sudo service nginx restart
 
 # renew letsencrypt certificates
-#sudo acmetool want linse.me www.linse.me box.linse.me
+# sudo vi /etc/nginx/sites-available/linse.me
+# sudo /etc/init.d/nginx restart
+# sudo acmetool want linse.me www.linse.me box.linse.me
+# sudo vi /etc/nginx/sites-available/linse.me
+# sudo /etc/init.d/nginx restart
 
 ## added css
 ## added template

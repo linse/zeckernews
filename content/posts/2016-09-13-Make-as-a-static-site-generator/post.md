@@ -12,6 +12,7 @@ I program in many languages and each one has different ways to build projects. S
 For data analysis projects I also used Makefiles, because some steps take time and it does not always make sense to rerun the entire pipeline, but it is important to run for example the cleanup step before we can run the normalization and the statistical analysis.
 
 That's three main advantages:
+
 - Avoiding duplicate steps
 - Writing down build commands in one place
 - Specifying dependencies and having them met
