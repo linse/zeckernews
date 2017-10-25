@@ -12,6 +12,7 @@ I did my PhD research on RNA Bioinformatics, and also went to Hackerschool in Ne
 Now I build infrastructure software to help the community at Etsy. Together with Hannes Mehnert and Jens Ohlig I wrote a book on functional programming in JavaScript and curry cooking (Das Curry-Buch, O'Reilly Germany), which is currently being translated into English.
 
 <br>
+<img src="http://i.imgur.com/qts1wx5.jpg" width=100px></img>
 <br>
 <br>
 <br>

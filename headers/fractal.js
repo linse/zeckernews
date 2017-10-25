@@ -1048,5 +1048,7 @@
     <li><a href="javascript:pngconvert('header');">PNG Output</a></li>
     </ul>
     </div>
+<meta name=viewport content='width=800'>
+<canvas id="header" width="100%" height="200px" border="2px black">You need a HTML5 browser to see the fancy header.</canvas>
   
   <!-- TO HERE -->

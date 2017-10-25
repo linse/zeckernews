@@ -52,6 +52,13 @@ $(outdir)/talks.html : $(pages)/talks.md
 $(outdir)/about.html : $(pages)/about.md
 	cat $< | pandoc -o $@ $(PANDOC_OPTIONS) -H headers/vonkoch.js -A after.html --variable=pagetitle:"About"; \
 
+# for testing
+$(outdir)/about2.html : $(pages)/about.md headers/warp.js
+	cat $< | pandoc -o $@ $(PANDOC_OPTIONS) -H headers/warp.js -A after.html --variable=pagetitle:"About"; \
+
+$(outdir)/projects.html : $(pages)/projects.md
+	cat $< | pandoc -o $@ $(PANDOC_OPTIONS) -H headers/warp.js -A after.html --variable=pagetitle:"Projects"; \
+
 $(outdir)/research.html : $(pages)/research.md
 	cat $< | pandoc -o $@ $(PANDOC_OPTIONS) -H headers/fractal.js -A after.html --variable=pagetitle:"Research"; \
 
