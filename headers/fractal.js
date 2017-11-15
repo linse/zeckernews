@@ -929,6 +929,8 @@
     initialize("header", w, h);
     resetvalues(4);
     draw();
+    var audio = new Audio('https://box.linse.me/sunhammer.mp3');
+    audio.play();
   }
   
   // On resize of browser window, only act if width changes
