@@ -56,7 +56,7 @@ $(outdir)/about.html : $(pages)/about.md
 $(outdir)/about2.html : $(pages)/about.md headers/warp.js
 	cat $< | pandoc -o $@ $(PANDOC_OPTIONS) -H headers/warp.js -A after.html --variable=pagetitle:"About"; \
 
-$(outdir)/projects.html : $(pages)/projects.md
+$(outdir)/projects.html : $(pages)/projects.md headers/warp.js
 	cat $< | pandoc -o $@ $(PANDOC_OPTIONS) -H headers/warp.js -A after.html --variable=pagetitle:"Projects"; \
 
 $(outdir)/research.html : $(pages)/research.md

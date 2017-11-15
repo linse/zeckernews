@@ -94,10 +94,37 @@
 </script>
 
 <script>
+function touchHandler(event)
+{
+    var touches = event.changedTouches,
+        first = touches[0],
+        type = "";
+    switch(event.type)
+    {
+        case "touchstart": type = "mousedown"; break;
+        case "touchmove":  type = "mousemove"; break;        
+        case "touchend":   type = "mouseup";   break;
+        default:           return;
+    }
+
+    // initMouseEvent(type, canBubble, cancelable, view, clickCount, 
+    //                screenX, screenY, clientX, clientY, ctrlKey, 
+    //                altKey, shiftKey, metaKey, button, relatedTarget);
+
+    var simulatedEvent = document.createEvent("MouseEvent");
+    simulatedEvent.initMouseEvent(type, true, true, window, 1, 
+                                  first.screenX, first.screenY, 
+                                  first.clientX, first.clientY, false, 
+                                  false, false, false, 0/*left*/, null);
+
+    first.target.dispatchEvent(simulatedEvent);
+    event.preventDefault();
+}
+
   var container;
   var camera, scene, renderer;
   var uniforms, material, mesh;
-  var mouseX = 0, mouseY = 0,
+  var mouseX = 47, mouseY = 25,
   lat = 0, lon = 0, phy = 0, theta = 0;
   var windowHalfX = window.innerWidth / 2;
   var windowHalfY = window.innerHeight / 2;
@@ -112,6 +139,8 @@
         mouseX = e.clientX;
         mouseY = e.clientY;
     });
+    container.addEventListener("touchmove", touchHandler, true);
+
     camera = new THREE.Camera();
     camera.position.z = 1;
     scene = new THREE.Scene();
