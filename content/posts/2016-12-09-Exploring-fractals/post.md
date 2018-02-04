@@ -2,7 +2,7 @@
 title: Exploring fractals
 date: 2016-12-09
 tags: []
-teaser: <img src="https://i.imgur.com/df2jyat.png" alt="20 Iterations"> You can create art and beauty in JavaScript.
+teaser: <img src="https://i.imgur.com/df2jyat.png" alt="20 Iterations"></img> You can create art and beauty in JavaScript.
 ---
 I really like JavaScript, and also the self-repeating patterns of nature. Leopard spots, sunflower seeds, surface tiles. Fractals are interesting self-similar structures that can often be viewed in 2d and look very organic. Can we explore them in Javascript?
 Let's talk about what a fractal is. It is a mathematical object that is similar-but-different to itself in the previous level of detail. Patterns that you see on one level of detail may also repeat on the next lower level of detail and so on and so on. Potentially, there are infinitely many levels of detail.
@@ -34,11 +34,11 @@ function iter(a, b, x, y, ba, mi) {
 If you go to the research page header and play with the fractal explorer, and look just at the first preset (a view of Mandelbrot set) and do only one iteration and redraw, the screen is filled with one color. 
 If you do two iterations you see a shape emerging. It is just a circle-like bubble. With the third iteration you see a T-like bubble inside of that one, with a third color, and so on and so on. We see the fractal being constructed and getting more fine-grained.
 Let's see what it looks like.
-<img src="https://i.imgur.com/0HtKiqP.png" alt="4 Iterations">
+<img src="https://i.imgur.com/0HtKiqP.png" alt="4 Iterations"></img>
 This image is for four iterations.
-<img src="https://i.imgur.com/OmFVYC2.png" alt="6 Iterations">
+<img src="https://i.imgur.com/OmFVYC2.png" alt="6 Iterations"></img>
 Six iterations.
-<img src="https://i.imgur.com/HZ3isRT.png" alt="20 Iterations">
+<img src="https://i.imgur.com/HZ3isRT.png" alt="20 Iterations"></img>
 20 iterations - this looks like the Mandelbrot set already. But if we zoom in we see it is very coarse, still.
 
 Determining how every pixel should be colored is a lot of work, we have to check every pixel via the equation for each 2D coordinate and iteration value. To speed this up, we can use JavaScript webworkers. Each worker computes one row of pixels in parallel using multithreading.

@@ -75,13 +75,22 @@ posts:
 		  cat $$f | pandoc -o $(outdir)/`basename $$p`.html $(PANDOC_OPTIONS) -H headers/rainbow_50.js -A afterPost.html --template templates/default.html; \
 	done;
 
-generate-feed:
-	(printf '<?xml version="1.0" encoding="utf-8"?>\n<rss version="2.0">'; \
+generate-feed-rss:
+	(printf '<?xml version="1.0" encoding="utf-8"?>\n<rss version="2.0">\n<channel><title>Linse</title><link>https://linse.me</link><description>O hai</description>'; \
 	for p in `ls $(posts)`; \
     do f=`find './$(posts)/'$$p -type f -print0 | xargs -0 ls -rt1`; \
 		  b=$${p%.*}; y=$${b/-/\/}; m=$${y/-/\/};  d=$${m/-/\/}; t=$$(basename $$d); w=$$(dirname $$d) \
-		  cat $$f | pandoc --variable=link:"https://"$(host)"/$$d.html" --template templates/feeditem.xml; \
-	done; echo "</rss>";) > $(outdir)/feed.xml;
+		  cat $$f | pandoc -t html5 --variable=link:"https://"$(host)"/$$d.html" --template templates/feeditem-rss.xml; \
+	done; echo "</channel></rss>";) > $(outdir)/feed.xml;
+
+# atom
+generate-feed: 
+	(printf '<?xml version="1.0" encoding="utf-8"?>\n<feed xmlns="http://www.w3.org/2005/Atom">\n<title>Linse</title><link href="https://linse.me" /><id>https://linse.me/feed.xml</id><updated>2003-12-13T18:30:02Z</updated>'; \
+	for p in `ls $(posts)`; \
+    do f=`find './$(posts)/'$$p -type f -print0 | xargs -0 ls -rt1`; \
+		  b=$${p%.*}; y=$${b/-/\/}; m=$${y/-/\/};  d=$${m/-/\/}; t=$$(basename $$d); w=$$(dirname $$d) \
+		  cat $$f | pandoc -t html5 --variable=link:"https://"$(host)"/$$d.html" --template templates/feeditem-atom.xml; \
+	done; echo "</feed>";) > $(outdir)/feed.xml;
 
 set-style:
 	cp style.css $(outdir)

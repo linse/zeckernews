@@ -1,7 +1,11 @@
 <meta name=viewport content='width=800'>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-<link href="https://linse.me/feed.xml" rel="alternate" type="application/rss+xml" title="Posts RSS" />
+<link href="https://linse.me/feed.xml" rel="alternate" type="application/atom+xml" title="Linse's log" />
+<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32" />
+<link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16" />
+<link href="/favicon.ico" rel="icon">
+
 <script type="text/javascript">
   $(document).ready(init);
 

@@ -1,8 +1,8 @@
 ---
-title: Comments for a static site<br> - github is my moderation queue
+title: Github is my moderation queue
 date: 2016-12-05
 tags: []
-teaser:  <img src="https://i.imgur.com/YxipNXz.png" alt="Open PR with comment"> How to make comments into pull requests that modify the site's source to append the comment to it, and rebuild it on merge.
+teaser:  <img src="https://i.imgur.com/YxipNXz.png" alt="Open PR with comment"></img> How to make comments into pull requests that modify the site's source to append the comment to it, and rebuild it on merge.
 ---
 In the last post I described how I generate my website. 
 Since the setup is not dynamic on the server, can we still let readers interact with it and have comments and a discussion?
@@ -84,9 +84,7 @@ What can we do with this?
 
 The next step is comment moderation. I have to take action on the pull request queue.
 I either close a pull request. 
-<PIC OF ME CLOSING IT>
 Or I approve it and merge the code change that it introduces.
-<PIC OF ME MERGING IT>
 
 Both actions trigger my deploy server, via github's webhook interface. 
 This is the second server I have running. The deploy server is even more concise than the comment server.
