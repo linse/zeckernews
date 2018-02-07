@@ -70,23 +70,45 @@ posts:
 		  cat $$f | pandoc -o $(outdir)/`basename $$p`.html $(PANDOC_OPTIONS) -H headers/rainbow_50.js -A afterPost.html --template templates/default.html; \
 	done;
 
-generate-feed-rss:
-	(printf '<?xml version="1.0" encoding="utf-8"?>\n<rss version="2.0">\n<channel><title>Linse</title><link>https://linse.me</link><description>O hai</description>'; \
-	for p in `ls $(POST_DIRS_IN)`; \
-    do f=`find $$p -type f -print0 | xargs -0 ls -rt1`; \
-		  b=$${p%.*}; y=$${b/-/\/}; m=$${y/-/\/};  d=$${m/-/\/}; t=$$(basename $$d); w=$$(dirname $$d) \
-		  cat $$f | pandoc -t html5 --variable=link:"https://"$(host)"/$$d.html" --template templates/feeditem-rss.xml; \
-	done; echo "</channel></rss>";) > $(outdir)/feed.xml;
+#generate-feed-rss:
+#	(printf '<?xml version="1.0" encoding="utf-8"?>\n<rss version="2.0">\n<channel><title>Linse</title><link>https://linse.me</link><description>O hai</description>'; \
+#	for p in `ls $(POST_DIRS_IN)`; \
+#    do f=`find $$p -type f -print0 | xargs -0 ls -rt1`; \
+#		  b=$${p%.*}; y=$${b/-/\/}; m=$${y/-/\/};  d=$${m/-/\/}; t=$$(basename $$d); w=$$(dirname $$d) \
+#		  cat $$f | pandoc -t html5 --variable=link:"https://"$(host)"/$$d.html" --template templates/feeditem-rss.xml; \
+#	done; echo "</channel></rss>";) > $(outdir)/feed.xml;
 
 # atom
-header = '<?xml version="1.0" encoding="utf-8"?>\n<feed xmlns="http://www.w3.org/2005/Atom">\n<title>Linse</title><link href="https://linse.me" /><id>https://linse.me/feed.xml</id><updated>2003-12-13T18:30:02Z</updated>'
+now = $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
+header = '<?xml version="1.0" encoding="utf-8"?>\n<feed xmlns="http://www.w3.org/2005/Atom">\n<title>Linse</title>\n<link href="https://linse.me" />\n<id>https://linse.me/feed.xml</id>\n<updated>$(now)</updated>\n<link rel="self" href="https://linse.me/feed.xml" />'
 generate-feed: 
 	(printf $(header); \
-	for p in $(POST_DIRS_IN); \
-    do f=`find $$p -type f -print0 | xargs -0 ls -rt1`; \
-		  b=$${p%.*}; y=$${b/-/\/}; m=$${y/-/\/};  d=$${m/-/\/}; t=$$(basename $$d); w=$$(dirname $$d) \
-		  cat $$f | pandoc -t html5 --variable=link:"https://"$(host)"/$$d.html" --template templates/feeditem-atom.xml; \
+	for dir in $(POST_DIRS_IN); \
+    do file=$$dir/post.md; \
+		   iso_time=`date -d @\`stat -c %Y $$dir\` -u +"%Y-%m-%dT%H:%M:%SZ"`; \
+	     base=`basename $$dir`; \
+       read -r date title <<< `sed -r 's/^[0-9\/]{11}/& /' <<< $${base//-/\/}`; \
+		   link=https://$(host)/$$date$${title//\//-}.html; \
+		   cat $$file | pandoc --variable=link:$$link --variable=updated:$$iso_time --template templates/feeditem-atom.xml; \
 	done; echo "</feed>";) > $(outdir)/feed.xml;
+
+ # https://linse.me/2017/01/08/LetsEncrypt-with-acmetool.html
+		   #b=$${dir%.*}; y=$${b/-/\/}; m=$${y/-/\/};  d=$${m/-/\/}; t=$$(basename $$d); w=$$(dirname $$d); \
+		   #cat $$file | pandoc --variable=link:"https://"$(host)"/$$d.html" --variable=updated:$$iso_time --template templates/feeditem-atom.xml; \
+# atom
+#header = '<?xml version="1.0" encoding="utf-8"?>\n<feed xmlns="http://www.w3.org/2005/Atom">\n<title>Linse</title><link href="https://linse.me" /><id>https://linse.me/feed.xml</id><updated>2003-12-13T18:30:02Z</updated>'
+#generate-feed-orig: 
+#	(printf $(header); \
+#	for p in $(POST_DIRS_IN); \
+#    do f=`find $$p -type f -print0 | xargs -0 ls -rt1`; \
+#		  printf $$p; \
+#		  t=`stat -c %Y $$f`; \
+#		  printf $$t; \
+#		  u=`date -d @$$t -u +"%Y-%m-%dT%H:%M:%SZ"`; \
+#		  printf $$u; \
+#		  b=$${p%.*}; y=$${b/-/\/}; m=$${y/-/\/};  d=$${m/-/\/}; t=$$(basename $$d); w=$$(dirname $$d) \
+#		  cat $$f | pandoc -t html5 --variable=link:"https://"$(host)"/$$d.html" --variable=updated=hello --template templates/feeditem-atom.xml; \
+#	done; echo "</feed>";) #> $(outdir)/feed.xml;
 
 set-style:
 	cp style.css $(outdir)
@@ -107,8 +129,8 @@ post:
 	vim +6 $$file;
 
 clean:
-	rm $(outdir)/*.html;
-	rm $(outdir)/*.js;
+	rm -i $(outdir)/*.html;
+	rm -i $(outdir)/*.js;
 # the right way:
 #$(outdir)/%.html: %.md
 #	pandoc $< -o $@

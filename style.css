@@ -179,6 +179,10 @@ textarea {
   margin: 1em auto;
 }
 
+code {
+  font-size: 80%; 
+}
+
 /* for box. fancyindex */
 table, table a {
   color : hotpink;
